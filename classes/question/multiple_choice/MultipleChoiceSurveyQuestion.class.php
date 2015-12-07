@@ -20,9 +20,11 @@ class MultipleChoiceSurveyQuestion extends Question
         $this->answers = $this->createAnswers();
         $this->answers->initFromXmlNode($answersNode);
 
-        $answer = $this->answers->answers[$this->answers->userAnswerIndex];
+        $answer = !empty($this->answers->answers[$this->answers->userAnswerIndex])
+                  ? $this->answers->answers[$this->answers->correctAnswerIndex]
+                  : null;
         /** @var MultipleChoiceSurveyAnswer $answer */
-        $this->userAnswer = $answer->getValue();
+        $this->userAnswer = $answer ? $answer->getValue() : null;
     }
 
     protected function createAnswers()
