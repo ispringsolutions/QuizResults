@@ -21,7 +21,7 @@ class MultipleChoiceSurveyQuestion extends Question
         $this->answers->initFromXmlNode($answersNode);
 
         $answer = !empty($this->answers->answers[$this->answers->userAnswerIndex])
-                  ? $this->answers->answers[$this->answers->correctAnswerIndex]
+                  ? $this->answers->answers[$this->answers->userAnswerIndex]
                   : null;
         /** @var MultipleChoiceSurveyAnswer $answer */
         $this->userAnswer = $answer ? $answer->getValue() : null;
