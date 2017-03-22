@@ -15,6 +15,7 @@
             <xs:element name="quizSettings" type="QuizSettings"/>
             <xs:element name="summary" type="QuizSummary"/>
             <xs:element name="questions" type="Questions"/>
+            <xs:element name="groups" type="GroupsResult" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="version" type="xs:unsignedInt" use="required"/>
     </xs:complexType>
@@ -41,12 +42,10 @@
     <xs:complexType name="Question" abstract="true">
         <xs:complexContent>
             <xs:extension base="QuestionBase">
-                <xs:attribute name="maxPoints" type="xs:double" use="required"/>
-                <xs:attribute name="maxAttempts">
+                <xs:attribute name="maxPoints" type="xs:float" use="required"/>
+                <xs:attribute name="maxAttempts" use="optional">
                     <xs:simpleType>
-                        <xs:restriction base="xs:unsignedInt">
-                            <xs:minInclusive value="0"/>
-                        </xs:restriction>
+                        <xs:restriction base="xs:unsignedInt"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="usedAttempts" type="xs:unsignedInt" use="required"/>
@@ -303,7 +302,7 @@
         </xs:attribute>
         <xs:attribute name="maxNormalizedScore" use="optional">
             <xs:simpleType>
-                <xs:restriction base="xs:unsignedInt">
+                <xs:restriction base="xs:float">
                     <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -607,6 +606,11 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+    <xs:complexType name="YesNoAnswer">
+        <xs:simpleContent>
+            <xs:extension base="xs:string" />
+        </xs:simpleContent>
+    </xs:complexType>
     <xs:complexType name="PickOneAnswer">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -649,7 +653,7 @@
     </xs:complexType>
     <xs:complexType name="YesNoAnswers">
         <xs:sequence minOccurs="2" maxOccurs="2">
-            <xs:element name="answer" type="PickOneAnswer"/>
+            <xs:element name="answer" type="YesNoAnswer"/>
         </xs:sequence>
         <xs:attribute name="userAnswerIndex">
             <xs:simpleType>
@@ -678,6 +682,7 @@
         <xs:complexContent>
             <xs:extension base="PickOneAnswer">
                 <xs:attribute name="selected" type="xs:boolean" use="required"/>
+                <xs:attribute name="originalIndex" type="xs:unsignedInt" use="optional"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -732,7 +737,7 @@
             <xs:extension base="SurveyQuestion">
                 <xs:sequence>
                     <xs:element name="details" type="WhichWordDetails"/>
-                    <xs:element name="words" type="WhichWordWords"/>
+                    <xs:element name="words" type="WhichWordWords" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -811,5 +816,19 @@
                 <xs:attribute name="status" type="ST_blankSlideStatus" use="required"/>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GroupResult">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="passingScore" type="xs:string" use="required"/>
+        <xs:attribute name="awardedScore" type="xs:string" use="required"/>
+        <xs:attribute name="passingPercent" type="xs:string" use="required"/>
+        <xs:attribute name="awardedPercent" type="xs:string" use="required"/>
+        <xs:attribute name="totalQuestions" type="xs:unsignedInt" use="required"/>
+        <xs:attribute name="answeredQuestions" type="xs:unsignedInt" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="GroupsResult">
+        <xs:sequence>
+            <xs:element name="group" type="GroupResult" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
 </xs:schema>
