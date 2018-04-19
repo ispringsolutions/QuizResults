@@ -7,7 +7,7 @@ class SequenceSurveyQuestion extends Question
      */
     public $answers;
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }

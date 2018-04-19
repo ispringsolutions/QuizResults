@@ -2,7 +2,7 @@
 
 class TypeInQuestion extends TypeInSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

@@ -20,7 +20,7 @@ class HotspotQuestion extends Question
         }
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

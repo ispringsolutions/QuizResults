@@ -5,7 +5,7 @@ class WordBankSurveyQuestion extends Question
     /** @var WordBankDetails */
     public $details;
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }

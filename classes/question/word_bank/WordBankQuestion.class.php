@@ -7,7 +7,7 @@ class WordBankQuestion extends WordBankSurveyQuestion
         return QuestionType::WORD_BANK;
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

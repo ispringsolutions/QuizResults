@@ -2,7 +2,7 @@
 
 class SequenceQuestion extends SequenceSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

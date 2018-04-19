@@ -2,7 +2,7 @@
 
 class NumericQuestion extends NumericSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

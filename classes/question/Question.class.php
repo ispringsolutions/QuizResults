@@ -7,9 +7,21 @@ abstract class Question
     public $userAnswer;
     public $correctAnswer;
 
+    /** @var bool */
+    private $evaluationEnabled = null;
+
     public function initFromXmlNode(DOMElement $node)
     {
         $this->reset();
+
+        if ($node->hasAttribute('evaluationEnabled'))
+        {
+            $this->evaluationEnabled = $node->getAttribute('evaluationEnabled') === 'true';
+        }
+        else
+        {
+            $this->evaluationEnabled = null;
+        }
 
         if ($this->isGraded())
         {
@@ -20,7 +32,12 @@ abstract class Question
         $this->direction = str_replace("\n", PHP_EOL, $directionSource);
     }
 
-    abstract public function isGraded();
+    public function isGraded()
+    {
+        return !is_null($this->evaluationEnabled) ? $this->evaluationEnabled : $this->isGradedByDefault();
+    }
+    
+    abstract public function isGradedByDefault();
 
     protected function reset()
     {

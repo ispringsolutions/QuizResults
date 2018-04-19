@@ -7,7 +7,7 @@ class LikertScaleQuestion extends Question
         return QuestionType::LIKERT_SCALE;
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }

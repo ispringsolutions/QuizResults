@@ -2,7 +2,7 @@
 
 class FillInTheBlankQuestion extends FillInTheBlankSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }
