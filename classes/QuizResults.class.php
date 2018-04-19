@@ -10,6 +10,7 @@ class QuizResults
     public $studentName;
     public $studentEmail;
     public $studentPoints;
+    public $version;
 
     /**
      * @var QuizDetails
@@ -40,6 +41,7 @@ class QuizResults
         $this->studentName = $requestParams["sn"];
         $this->studentEmail = $requestParams["se"];
         $this->studentPoints = $requestParams["sp"];
+        $this->version = $requestParams["v"];
     }
 
     private function InitUserAttemptData()
@@ -59,7 +61,7 @@ class QuizResults
         {
             $quizDetails = new QuizDetails();
             $xsdFileName = self::XSD_HEAD;
-            $validateSuccessfully = $quizDetails->loadFromXml($detailResultXml, $xsdFileName, $this->getVersion($requestParams));
+            $validateSuccessfully = $quizDetails->loadFromXml($detailResultXml, $xsdFileName, $this->version);
             if ($validateSuccessfully)
             {
                 $this->detailResult = $quizDetails;
@@ -92,16 +94,5 @@ class QuizResults
         {
             throw new InvalidArgumentException("Incorrect or missing variables: " . join(", ", $invalidVariables));
         }
-    }
-
-    /**
-     * @param string[] $requestParams
-     * @return string|null
-     */
-    private function getVersion($requestParams)
-    {
-        return !empty($requestParams['v'])
-            ? $requestParams['v']
-            : null;
     }
 }
