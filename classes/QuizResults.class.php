@@ -10,6 +10,8 @@ class QuizResults
     public $studentName;
     public $studentEmail;
     public $studentPoints;
+    public $quizTakingTimeInSeconds;
+    public $formattedQuizTakingTime;
     public $version;
 
     /**
@@ -42,6 +44,8 @@ class QuizResults
         $this->studentEmail = $requestParams["se"];
         $this->studentPoints = $requestParams["sp"];
         $this->version = $requestParams["v"];
+        $this->quizTakingTimeInSeconds = $requestParams["ut"];
+        $this->formattedQuizTakingTime = $requestParams["fut"] ?: $this->FormatQuizTakingTime($this->quizTakingTimeInSeconds);
     }
 
     private function InitUserAttemptData()
@@ -94,5 +98,11 @@ class QuizResults
         {
             throw new InvalidArgumentException("Incorrect or missing variables: " . join(", ", $invalidVariables));
         }
+    }
+
+    private function FormatQuizTakingTime($quizTakingTimeInSeconds)
+    {
+        $format = new TimeIntervalFormat();
+        return $format->ApplyToSeconds($quizTakingTimeInSeconds);
     }
 }

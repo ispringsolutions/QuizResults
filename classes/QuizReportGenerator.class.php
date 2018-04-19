@@ -47,6 +47,10 @@ class QuizReportGenerator
             $header .= 'Passing Score: ' . $this->quizResults->passingScore . PHP_EOL;
             $header .= 'User Score: ' . $this->quizResults->studentPoints . PHP_EOL;
         }
+        if ($this->quizResults->formattedQuizTakingTime)
+        {
+            $header .= 'Quiz Taking Time: ' . $this->quizResults->formattedQuizTakingTime . PHP_EOL;
+        }
 
         return $header . PHP_EOL;
     }
