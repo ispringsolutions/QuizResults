@@ -2,11 +2,14 @@
 
 class QuestionFactory
 {
+    const TYPE_IN_RENAMED_AT_VERSION = '9.0';
+
     /**
      * @param DOMElement $questionNode
+     * @param string $version
      * @return IQuestion|null
      */
-    public static function CreateFromXmlNode(DOMElement $questionNode)
+    public static function CreateFromXmlNode(DOMElement $questionNode, $version)
     {
         $question = null;
 
@@ -27,8 +30,15 @@ class QuestionFactory
             case QuestionType::FILL_IN_THE_BLANK:
                 $question = new FillInTheBlankQuestion();
                 break;
-            case QuestionType::LEGACY_TYPE_IN:
-                $question = new TypeInQuestion();
+            case QuestionType::LEGACY_TYPE_IN_OR_NEW_FILL_IN_THE_BLANK:
+                if (self::IsVersionOlderThan($version, self::TYPE_IN_RENAMED_AT_VERSION))
+                {
+                    $question = new TypeInQuestion();
+                }
+                else
+                {
+                    $question = new FillInTheBlankQuestion();
+                }
                 break;
             case QuestionType::TYPE_IN:
                 $question = new TypeInQuestion();
@@ -92,5 +102,22 @@ class QuestionFactory
         }
 
         return $question;
+    }
+
+    /**
+     * @param string $version1
+     * @param string $version2
+     * @return bool
+     */
+    private static function IsVersionOlderThan($version1, $version2)
+    {
+        if (!$version1)
+        {
+            // empty version is considered to be older (they don't send version parameter)
+            return true;
+        }
+
+        $comparisonResult = strnatcmp($version1, $version2);
+        return $comparisonResult < 0;
     }
 }

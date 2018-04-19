@@ -59,7 +59,7 @@ class QuizResults
         {
             $quizDetails = new QuizDetails();
             $xsdFileName = self::XSD_HEAD;
-            $validateSuccessfully = @$quizDetails->loadFromXml($detailResultXml, $xsdFileName);
+            $validateSuccessfully = $quizDetails->loadFromXml($detailResultXml, $xsdFileName, $this->getVersion($requestParams));
             if ($validateSuccessfully)
             {
                 $this->detailResult = $quizDetails;
@@ -92,5 +92,16 @@ class QuizResults
         {
             throw new InvalidArgumentException("Incorrect or missing variables: " . join(", ", $invalidVariables));
         }
+    }
+
+    /**
+     * @param string[] $requestParams
+     * @return string|null
+     */
+    private function getVersion($requestParams)
+    {
+        return !empty($requestParams['v'])
+            ? $requestParams['v']
+            : null;
     }
 }

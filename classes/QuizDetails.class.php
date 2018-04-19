@@ -6,11 +6,12 @@ class QuizDetails
 
     /**
      * init from xml
-     * @param $xml - string
-     * @param $xsdSchemeFileName - string
-     * @return true, if xml was validate with xsd scheme, else - false
+     * @param string $xml
+     * @param string $xsdSchemeFileName
+     * @param string $version
+     * @return bool true, if xml was validate with xsd scheme, else - false
      */
-    public function loadFromXml($xml, $xsdSchemeFileName)
+    public function loadFromXml($xml, $xsdSchemeFileName, $version)
     {
         libxml_use_internal_errors(true);
 
@@ -26,16 +27,20 @@ class QuizDetails
         }
 
         $questionsNode = $doc->getElementsByTagName('questions')->item(0);
-        $this->exportQuestions($questionsNode);
+        $this->exportQuestions($questionsNode, $version);
 
         return true;
     }
 
-    private function exportQuestions(DOMElement $questionsNode)
+    /**
+     * @param DOMElement $questionsNode
+     * @param string $version
+     */
+    private function exportQuestions(DOMElement $questionsNode, $version)
     {
         foreach ($questionsNode->childNodes as $questionNode)
         {
-            $question = QuestionFactory::CreateFromXmlNode($questionNode);
+            $question = QuestionFactory::CreateFromXmlNode($questionNode, $version);
             if ($question)
             {
                 $this->questions[] = $question;

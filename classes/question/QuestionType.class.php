@@ -8,7 +8,7 @@ class QuestionType
     const SEQUENCE = 'sequenceQuestion';
     const NUMERIC = 'numericQuestion';
     const FILL_IN_THE_BLANK = 'fillInTheBlankQuestionEx';
-    const LEGACY_TYPE_IN = 'fillInTheBlankQuestion';
+    const LEGACY_TYPE_IN_OR_NEW_FILL_IN_THE_BLANK = 'fillInTheBlankQuestion';
     const TYPE_IN = 'typeInQuestion';
     const MATCHING = 'matchingQuestion';
     const MULTIPLE_CHOICE_TEXT = 'multipleChoiceTextQuestion';
@@ -35,7 +35,7 @@ class QuestionType
         self::SEQUENCE,
         self::NUMERIC,
         self::FILL_IN_THE_BLANK,
-        self::LEGACY_TYPE_IN,
+        self::LEGACY_TYPE_IN_OR_NEW_FILL_IN_THE_BLANK,
         self::MATCHING,
         self::MULTIPLE_CHOICE_TEXT,
         self::WORD_BANK,

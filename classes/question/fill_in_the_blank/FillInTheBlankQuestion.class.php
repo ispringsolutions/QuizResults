@@ -18,7 +18,10 @@ class FillInTheBlankQuestion extends FillInTheBlankSurveyQuestion
 
         $detailsNode = $node->getElementsByTagName('details')->item(0);
         $this->details = $this->createDetails();
-        $this->details->initFromXmlNode($detailsNode);
+        if ($detailsNode)
+        {
+            $this->details->initFromXmlNode($detailsNode);
+        }
 
         foreach ($this->details->items as $item)
         {
