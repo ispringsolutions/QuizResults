@@ -12,7 +12,7 @@ class TypeInQuestion extends TypeInSurveyQuestion
         parent::initFromXmlNode($node);
 
         $answersNode = $node->getElementsByTagName('acceptableAnswers')->item(0);
-        $answersList = $answersNode->getElementsByTagName('answer');
+        $answersList = $answersNode ? $answersNode->getElementsByTagName('answer') : [];
         for ($i = 0; $i < $answersList->length; ++$i)
         {
             $answerNode = $answersList->item($i);
