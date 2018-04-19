@@ -27,6 +27,9 @@ class QuestionFactory
             case QuestionType::FILL_IN_THE_BLANK:
                 $question = new FillInTheBlankQuestion();
                 break;
+            case QuestionType::LEGACY_TYPE_IN:
+                $question = new TypeInQuestion();
+                break;
             case QuestionType::TYPE_IN:
                 $question = new TypeInQuestion();
                 break;
