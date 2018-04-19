@@ -1,6 +1,6 @@
 <?php
 
-class WorkBankSurveyQuestion extends Question
+class WordBankSurveyQuestion extends Question
 {
     /** @var WordBankDetails */
     public $details;

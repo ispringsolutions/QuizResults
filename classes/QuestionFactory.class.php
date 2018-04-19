@@ -70,7 +70,7 @@ class QuestionFactory
                 $question = new MatchingSurveyQuestion();
                 break;
             case QuestionType::WHICH_WORD:
-                $question = new WorkBankSurveyQuestion();
+                $question = new WordBankSurveyQuestion();
                 break;
             case QuestionType::LIKERT_SCALE:
                 $question = new LikertScaleQuestion();
