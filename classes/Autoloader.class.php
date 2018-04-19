@@ -11,8 +11,6 @@ class Autoloader
     /** @var string[]|null */
     private static $pathsByClassNames;
 
-    const CACHE_DIR = 'cache';
-
     public static function LoadClassByName($className)
     {
         self::EnsureClassPathsAreLoaded();
@@ -27,37 +25,8 @@ class Autoloader
     {
         if (is_null(self::$pathsByClassNames))
         {
-            self::EnsureClassPathsCacheIsCreated();
-            self::$pathsByClassNames = self::LoadFromCache() ?: self::ReadClassPathsFromFileSystem();
+            self::$pathsByClassNames = self::ReadClassPathsFromFileSystem();
         }
-    }
-
-    private static function EnsureClassPathsCacheIsCreated()
-    {
-        $filePath = self::GetCacheFilePath();
-        if (!file_exists($filePath))
-        {
-            $classPathsByNames = self::ReadClassPathsFromFileSystem();
-            $data = self::PHP_STATEMENT_THAT_RETURNS_VALUE . var_export($classPathsByNames, true) . self::PHP_STATEMENT_END;
-            @file_put_contents($filePath, $data);
-        }
-    }
-
-    /**
-     * @return string[]
-     */
-    private static function LoadFromCache()
-    {
-        $cacheFilePath = self::GetCacheFilePath();
-        return is_readable($cacheFilePath) ? include_once($cacheFilePath) : [];
-    }
-
-    /**
-     * @return string
-     */
-    private static function GetCacheFilePath()
-    {
-        return dirname(__FILE__) . '/../' . self::CACHE_DIR . '/__autoload_cache.php';
     }
 
     /**
