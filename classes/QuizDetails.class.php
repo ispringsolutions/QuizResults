@@ -2,6 +2,12 @@
 
 class QuizDetails
 {
+    const FINISH_TIMESTAMP_ATTRIBUTE = 'finishTimestamp';
+
+    /** @var string|null */
+    public $finishedAt;
+
+    /** @var Question[] */
     public $questions;
 
     /**
@@ -26,6 +32,11 @@ class QuizDetails
             return false;
         }
 
+        $summaryNode = $doc->getElementsByTagName('summary')->item(0);
+        if ($summaryNode && $summaryNode->hasAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE))
+        {
+            $this->finishedAt = $summaryNode->getAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE);
+        }
         $questionsNode = $doc->getElementsByTagName('questions')->item(0);
         $this->exportQuestions($questionsNode, $version);
 

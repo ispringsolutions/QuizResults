@@ -55,6 +55,11 @@ class QuizReportGenerator
         {
             $header .= 'Quiz Taking Time: ' . $this->quizResults->formattedQuizTakingTime . PHP_EOL;
         }
+
+        if ($this->quizResults->detailResult->finishedAt)
+        {
+            $header .= "Quiz Finished At: " . $this->quizResults->detailResult->finishedAt . PHP_EOL;
+        }
         
         $header .= $this->getTakerInfoFields();
 
