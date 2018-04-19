@@ -16,7 +16,7 @@ class HotspotQuestion extends Question
             {
                 $this->userAnswer .= '; ';
             }
-            $this->userAnswer .= $hotspot->label . ' - ' . (($hotspot->marked) ? 'Marked' : 'Unmarked');
+            $this->userAnswer .= $hotspot->label . ' - ' . (($hotspot->marked) ? 'Marked' : 'Unmarked') . $this->getHotspotStatus($hotspot);
         }
     }
 
@@ -27,10 +27,15 @@ class HotspotQuestion extends Question
 
     /**
      * @param DOMElement $node
-     * @return Hotspot
+     * @return Hotspot[]
      */
-    private function getHotspotsFromXmlNode(DOMElement $node)
+    private function getHotspotsFromXmlNode(DOMElement $node = null)
     {
+        if (!$node)
+        {
+            return [];
+        }
+
         $hotspots = array();
         foreach ($node->childNodes as $hotspotNode)
         {
@@ -59,5 +64,18 @@ class HotspotQuestion extends Question
         $hotspot->initFromXmlNode($hotspotNode);
 
         return $hotspot;
+    }
+
+    /**
+     * @param Hotspot $hotspot
+     * @return string
+     */
+    private function getHotspotStatus(Hotspot $hotspot)
+    {
+        if (!$this->isGraded() || is_null($hotspot->correct))
+        {
+            return '';
+        }
+        return ' - ' . ($hotspot->correct ? 'Correct' : 'Incorrect');
     }
 }
