@@ -12,15 +12,8 @@ class QuizTakerInfo
 
     public function __construct($fieldTitles, $fieldValues)
     {
-        $this->fieldTitles = $this->escape($fieldTitles);
-        $this->fieldValues = $this->escape(
-            $this->collectKnownFieldValues($fieldValues)
-        );
-    }
-
-    private function escape($strings)
-    {
-        return array_map('htmlspecialchars', $strings);
+        $this->fieldTitles = $fieldTitles;
+        $this->fieldValues = $this->collectKnownFieldValues($fieldValues);
     }
 
     public function initUserInResults(QuizResults $quizResults)
