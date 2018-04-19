@@ -16,8 +16,13 @@ class NumericQuestion extends NumericSurveyQuestion
         $this->correctAnswer = join(', ', $answers);
     }
 
-    private function exportAnswers(DOMElement $node)
+    private function exportAnswers(DOMElement $node = null)
     {
+        if (!$node)
+        {
+            return null;
+        }
+
         $answers = array();
         $answersList = $node->childNodes;
         for ($i = 0; $i < $answersList->length; ++$i)
