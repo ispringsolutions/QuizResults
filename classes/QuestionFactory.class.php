@@ -94,6 +94,9 @@ class QuestionFactory
             case QuestionType::FILL_IN_THE_BLANK_SURVEY:
                 $question = new FillInTheBlankSurveyQuestion();
                 break;
+            case QuestionType::DRAG_AND_DROP_QUESTION:
+                $question = new DragAndDropQuestion();
+                break;
         }
 
         if ($question != null)

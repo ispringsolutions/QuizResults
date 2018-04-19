@@ -15,6 +15,7 @@ class QuestionType
     const WORD_BANK = 'wordBankQuestion';
     const ESSAY = 'essayQuestion';
     const HOTSPOT = 'hotspotQuestion';
+    const DRAG_AND_DROP_QUESTION = 'dndQuestion';
 
     const YES_NO = 'yesNoQuestion';
     const PICK_ONE = 'pickOneQuestion';
