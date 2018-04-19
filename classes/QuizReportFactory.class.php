@@ -18,8 +18,9 @@ class QuizReportFactory
         {
             $takerInfo->initUserInResults($quizResults);
         }
-        $generator = new QuizReportGenerator($quizResults, $requestParams);
 
+        $generator = new QuizReportGenerator($quizResults, $requestParams);
+        $generator->setTakerInfo($takerInfo);
         return $generator;
     }
 }

@@ -7,6 +7,9 @@ class QuizReportGenerator
 
     private $quizResults;
 
+    /** @var QuizTakerInfo|null */
+    private $takerInfo;
+
     public function __construct(QuizResults $quizResults, $requestParams)
     {
         $this->quizResults = $quizResults;
@@ -47,10 +50,13 @@ class QuizReportGenerator
             $header .= 'Passing Score: ' . $this->quizResults->passingScore . PHP_EOL;
             $header .= 'User Score: ' . $this->quizResults->studentPoints . PHP_EOL;
         }
+
         if ($this->quizResults->formattedQuizTakingTime)
         {
             $header .= 'Quiz Taking Time: ' . $this->quizResults->formattedQuizTakingTime . PHP_EOL;
         }
+        
+        $header .= $this->getTakerInfoFields();
 
         return $header . PHP_EOL;
     }
@@ -71,5 +77,24 @@ class QuizReportGenerator
         $text .= 'User Response: ' . $question->userAnswer . PHP_EOL;
 
         return $text;
+    }
+
+    /**
+     * @param QuizTakerInfo $takerInfo
+     */
+    public function setTakerInfo(QuizTakerInfo $takerInfo = null)
+    {
+        $this->takerInfo = $takerInfo;
+    }
+
+    private function getTakerInfoFields()
+    {
+        $result = '';
+        $fields = $this->takerInfo ? $this->takerInfo->getFields() : [];
+        foreach ($fields as $field)
+        {
+            $result .= "{$field->getTitle()}: {$field->getValue()}" . PHP_EOL;
+        }
+        return $result;
     }
 }
