@@ -479,11 +479,11 @@
         <xs:attribute name="userAnswer" type="xs:string" use="required"/>
     </xs:complexType>
     <xs:complexType name="MultipleChoiceTextDetailsBlank">
-        <xs:sequence minOccurs="2" maxOccurs="unbounded">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="answer" type="xs:string"/>
         </xs:sequence>
-        <xs:attribute name="userAnswerIndex" type="xs:unsignedInt"/>
-        <xs:attribute name="correctAnswerIndex" type="xs:unsignedInt"/>
+        <xs:attribute name="userAnswerIndex" type="xs:integer"/>
+        <xs:attribute name="correctAnswerIndex" type="xs:integer"/>
     </xs:complexType>
     <xs:complexType name="MultipleChoiceTextDetails">
         <xs:choice maxOccurs="unbounded">
