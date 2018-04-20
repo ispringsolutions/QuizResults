@@ -101,20 +101,8 @@
         <xs:sequence minOccurs="2" maxOccurs="unbounded">
             <xs:element name="answer" type="MultipleChoiceAnswer"/>
         </xs:sequence>
-        <xs:attribute name="correctAnswerIndex">
-            <xs:simpleType>
-                <xs:restriction base="xs:unsignedInt">
-                    <xs:minInclusive value="0"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="userAnswerIndex">
-            <xs:simpleType>
-                <xs:restriction base="xs:unsignedInt">
-                    <xs:minInclusive value="0"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
+        <xs:attribute name="correctAnswerIndex" type="xs:integer"/>
+        <xs:attribute name="userAnswerIndex" type="xs:integer"/>
     </xs:complexType>
     <xs:complexType name="TrueFalseAnswers">
         <xs:sequence minOccurs="2" maxOccurs="2">
@@ -147,6 +135,7 @@
         <xs:complexContent>
             <xs:extension base="Text">
                 <xs:attribute name="percents" type="xs:double"/>
+                <xs:attribute name="score" type="xs:double"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
