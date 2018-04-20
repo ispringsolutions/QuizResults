@@ -60,7 +60,7 @@ class QuizResults
             return;
         }
 
-        $detailResultXml = stripslashes($requestParams["dr"]);
+        $detailResultXml = $requestParams["dr"];
         if ($detailResultXml)
         {
             $quizDetails = new QuizDetails();
