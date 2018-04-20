@@ -165,8 +165,9 @@
     <xs:complexType name="MultipleResponseAnswer">
         <xs:complexContent>
             <xs:extension base="Text">
-                <xs:attribute name="correct" type="xs:boolean" />
-                <xs:attribute name="selected" type="xs:boolean" use="required"/>
+                <xs:attribute name="correct" type="xs:boolean"/>
+                <xs:attribute name="selected" type="xs:boolean"/>
+                <xs:attribute name="customAnswer" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
