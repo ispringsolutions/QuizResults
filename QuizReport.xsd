@@ -859,8 +859,8 @@
     <xs:complexType name="DndQuestionObjectPlacement">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="objectIndex" type="xs:unsignedInt" use="required"/>
-                <xs:attribute name="destinationIndex" type="xs:unsignedInt" use="required"/>
+                <xs:attribute name="objectIndex" type="xs:integer" use="required"/>
+                <xs:attribute name="destinationIndex" type="xs:integer" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
