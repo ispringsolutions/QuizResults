@@ -842,7 +842,7 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="DndQuestionObjectPlacementCollection">
-        <xs:sequence maxOccurs="unbounded">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="match" type="DndQuestionObjectPlacement" />
         </xs:sequence>
     </xs:complexType>
