@@ -2,7 +2,8 @@
 
 class QuizResults
 {
-    const XSD_HEAD = "QuizReport.xsd";
+    const XSD_CURRENT = "QuizReport.xsd";
+    const XSD_OLDER_THAN_9 = "QuizReport_8.xsd";
 
     public $quizType;
     public $quizTitle;
@@ -22,7 +23,7 @@ class QuizResults
     public function InitFromRequest($requestParams)
     {
         $this->ReadFromRequestParams($requestParams);
-        $this->checkInvalidVariables();
+        $this->CheckInvalidVariables();
         $this->InitUserAttemptData();
         $this->InitDetailResult($requestParams);
     }
@@ -64,7 +65,7 @@ class QuizResults
         if ($detailResultXml)
         {
             $quizDetails = new QuizDetails();
-            $xsdFileName = self::XSD_HEAD;
+            $xsdFileName = $this->GetSchemaByVersion($this->version);
             $validateSuccessfully = $quizDetails->loadFromXml($detailResultXml, $xsdFileName, $this->version);
             if ($validateSuccessfully)
             {
@@ -73,7 +74,7 @@ class QuizResults
         }
     }
 
-    private function checkInvalidVariables()
+    private function CheckInvalidVariables()
     {
         $invalidVariables = array();
         if (empty($this->quizTitle))
@@ -104,5 +105,19 @@ class QuizResults
     {
         $format = new TimeIntervalFormat();
         return $format->ApplyToSeconds($quizTakingTimeInSeconds);
+    }
+
+    /**
+     * @param string $version
+     * @return string
+     */
+    private function GetSchemaByVersion($version)
+    {
+        $validationSchema = self::XSD_OLDER_THAN_9;
+        if (Version::IsVersionNewerOrSameAs($version, '9.0'))
+        {
+            $validationSchema = self::XSD_CURRENT;
+        }
+        return $validationSchema;
     }
 }

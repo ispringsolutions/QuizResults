@@ -29,7 +29,7 @@ class QuizDetails
         if (!$doc->schemaValidate($xsdSchemeFileName))
         {
             _log(var_export(libxml_get_errors(), true));
-            // continue processing, as the current XSD version is not final and there can be missing elements and extra attributes
+            return false;
         }
 
         $summaryNode = $doc->getElementsByTagName('summary')->item(0);
