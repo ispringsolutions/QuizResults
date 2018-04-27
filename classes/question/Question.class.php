@@ -28,7 +28,8 @@ abstract class Question
             $this->awardedPoints = $node->getAttribute('awardedPoints');
         }
 
-        $directionSource = trim($node->getElementsByTagName('direction')->item(0)->textContent);
+        $directionNode = $node->getElementsByTagName('direction')->item(0);
+        $directionSource = trim($directionNode ? $directionNode->textContent : '');
         $this->direction = str_replace("\n", PHP_EOL, $directionSource);
     }
 
