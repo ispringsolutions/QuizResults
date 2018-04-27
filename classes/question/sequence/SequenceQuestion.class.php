@@ -14,7 +14,7 @@ class SequenceQuestion extends SequenceSurveyQuestion
         $correctAnswer = array();
         foreach ($this->answers as $answer)
         {
-            $correctAnswer[$answer->index] = $answer;
+            $correctAnswer[$this->getCorrectAnswerIndex($answer)] = $answer;
         }
 
         $answersCount = count($correctAnswer);
@@ -33,5 +33,16 @@ class SequenceQuestion extends SequenceSurveyQuestion
         $answer = new SequenceAnswer();
         $answer->index = $index;
         return $answer;
+    }
+
+    /**
+     * @param SequenceAnswer $answer
+     * @return int
+     */
+    private function getCorrectAnswerIndex($answer)
+    {
+        return isset($answer->originalIndex)
+            ? $answer->originalIndex
+            : $answer->index;
     }
 }
