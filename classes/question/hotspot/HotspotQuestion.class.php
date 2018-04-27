@@ -10,14 +10,8 @@ class HotspotQuestion extends Question
         $hotspotsNode = $hotspotsNodeList->item(0);
         $hotspots = $this->getHotspotsFromXmlNode($hotspotsNode);
 
-        foreach ($hotspots as $hotspot)
-        {
-            if ($this->userAnswer != '')
-            {
-                $this->userAnswer .= '; ';
-            }
-            $this->userAnswer .= $hotspot->label . ' - ' . (($hotspot->marked) ? 'Marked' : 'Unmarked') . $this->getHotspotStatus($hotspot);
-        }
+        $this->userAnswer = $this->getHotspotsMarkedByUser($hotspots);
+        $this->correctAnswer = $this->getCorrectHotspots($hotspots);
     }
 
     public function isGradedByDefault()
@@ -67,15 +61,42 @@ class HotspotQuestion extends Question
     }
 
     /**
-     * @param Hotspot $hotspot
+     * @param Hotspot[] $hotspots
      * @return string
      */
-    private function getHotspotStatus(Hotspot $hotspot)
+    private function getHotspotsMarkedByUser($hotspots)
     {
-        if (!$this->isGraded() || is_null($hotspot->correct))
-        {
-            return '';
-        }
-        return ' - ' . ($hotspot->correct ? 'Correct' : 'Incorrect');
+        $hotspots = array_filter(
+            $hotspots,
+            function (Hotspot $hotspot) { return $hotspot->marked; }
+        );
+        return $this->getHotspotsString($hotspots);
+    }
+
+    /**
+     * @param Hotspot[] $hotspots
+     * @return string
+     */
+    private function getCorrectHotspots($hotspots)
+    {
+        $hotspots = array_filter(
+            $hotspots,
+            function (Hotspot $hotspot) { return $hotspot->correct; }
+        );
+        return $this->getHotspotsString($hotspots);
+    }
+
+    /**
+     * @param Hotspot[] $hotspots
+     * @return string
+     */
+    private function getHotspotsString($hotspots)
+    {
+        $labels = array_map(
+            function (Hotspot $hotspot) { return $hotspot->label; },
+            $hotspots
+        );
+        $notEmptyLabels = array_filter($labels);
+        return implode('; ', $notEmptyLabels);
     }
 }
