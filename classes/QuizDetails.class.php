@@ -2,15 +2,22 @@
 
 class QuizDetails
 {
+    const FINISH_TIMESTAMP_ATTRIBUTE = 'finishTimestamp';
+
+    /** @var string|null */
+    public $finishedAt;
+
+    /** @var Question[] */
     public $questions;
 
     /**
      * init from xml
-     * @param $xml - string
-     * @param $xsdSchemeFileName - string
-     * @return true, if xml was validate with xsd scheme, else - false
+     * @param string $xml
+     * @param string $xsdSchemeFileName
+     * @param string $version
+     * @return bool true, if xml was validate with xsd scheme, else - false
      */
-    public function loadFromXml($xml, $xsdSchemeFileName)
+    public function loadFromXml($xml, $xsdSchemeFileName, $version)
     {
         libxml_use_internal_errors(true);
 
@@ -25,96 +32,28 @@ class QuizDetails
             return false;
         }
 
+        $summaryNode = $doc->getElementsByTagName('summary')->item(0);
+        if ($summaryNode && $summaryNode->hasAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE))
+        {
+            $this->finishedAt = $summaryNode->getAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE);
+        }
         $questionsNode = $doc->getElementsByTagName('questions')->item(0);
-        $this->exportQuestions($questionsNode);
+        $this->exportQuestions($questionsNode, $version);
 
         return true;
     }
 
-    private function exportQuestions(DOMElement $questionsNode)
+    /**
+     * @param DOMElement $questionsNode
+     * @param string $version
+     */
+    private function exportQuestions(DOMElement $questionsNode, $version)
     {
-        $questionsList = $questionsNode->childNodes;
-        for ($i = 0; $i < $questionsList->length; ++$i)
+        foreach ($questionsNode->childNodes as $questionNode)
         {
-            $question = null;
-
-            $questionNode = $questionsList->item($i);
-            switch ($questionNode->nodeName)
+            $question = QuestionFactory::CreateFromXmlNode($questionNode, $version);
+            if ($question)
             {
-            case QuestionType::TRUE_FALSE:
-                $question = new TrueFalseQuestion();
-                break;
-            case QuestionType::MULTIPLE_CHOICE:
-                $question = new MultipleChoiceQuestion();
-                break;
-            case QuestionType::MULTIPLE_RESPOSE:
-                $question = new MultipleResponseQuestion();
-                break;
-            case QuestionType::SEQUENCE:
-                $question = new SequenceQuestion();
-                break;
-            case QuestionType::FILL_IN_THE_BLANK:
-                $question = new FillInTheBlankQuestion();
-                break;
-            case QuestionType::TYPE_IN:
-                $question = new TypeInQuestion();
-                break;
-            case QuestionType::MATCHING:
-                $question = new MatchingQuestion();
-                break;
-            case QuestionType::NUMERIC:
-                $question = new NumericQuestion();
-                break;
-            case QuestionType::MULTIPLE_CHOICE_TEXT:
-                $question = new MultipleChoiceTextQuestion();
-                break;
-            case QuestionType::WORD_BANK:
-                $question = new WordBankQuestion();
-                break;
-            case QuestionType::ESSAY:
-                $question = new EssayQuestion();
-                break;
-            case QuestionType::HOTSPOT:
-                $question = new HotspotQuestion();
-                break;
-            case QuestionType::YES_NO:
-                $question = new TrueFalseSurveyQuestion();
-                break;
-            case QuestionType::PICK_ONE:
-                $question = new MultipleChoiceSurveyQuestion();
-                break;
-            case QuestionType::PICK_MANY:
-                $question = new MultipleResponseSurveyQuestion();
-                break;
-            case QuestionType::SHORT_ANSWER:
-                $question = new TypeInSurveyQuestion();
-                break;
-            case QuestionType::RANKING:
-                $question = new SequenceSurveyQuestion();
-                break;
-            case QuestionType::NUMERIC_SURVEY:
-                $question = new NumericSurveyQuestion();
-                break;
-            case QuestionType::MATCHING_SURVEY:
-                $question = new MatchingSurveyQuestion();
-                break;
-            case QuestionType::WHICH_WORD:
-                $question = new WorkBankSurveyQuestion();
-                break;
-            case QuestionType::LIKERT_SCALE:
-                $question = new LikertScaleQuestion();
-                break;
-            case QuestionType::MULTIPLE_CHOICE_TEXT_SURVEY:
-                $question = new MultipleChoiceTextSurveyQuestion();
-                break;
-            case QuestionType::FILL_IN_THE_BLANK_SURVEY:
-                $question = new FillInTheBlankSurveyQuestion();
-                break;
-            }
-
-            if ($question != null)
-            {
-                $question->initFromXmlNode($questionNode);
                 $this->questions[] = $question;
             }
         }

@@ -2,7 +2,8 @@
 
 class QuizResults
 {
-    const XSD_HEAD = "QuizReport.xsd";
+    const XSD_CURRENT = "QuizReport.xsd";
+    const XSD_OLDER_THAN_9 = "QuizReport_8.xsd";
 
     public $quizType;
     public $quizTitle;
@@ -10,6 +11,9 @@ class QuizResults
     public $studentName;
     public $studentEmail;
     public $studentPoints;
+    public $quizTakingTimeInSeconds;
+    public $formattedQuizTakingTime;
+    public $version;
 
     /**
      * @var QuizDetails
@@ -19,7 +23,7 @@ class QuizResults
     public function InitFromRequest($requestParams)
     {
         $this->ReadFromRequestParams($requestParams);
-        $this->checkInvalidVariables();
+        $this->CheckInvalidVariables();
         $this->InitUserAttemptData();
         $this->InitDetailResult($requestParams);
     }
@@ -40,6 +44,9 @@ class QuizResults
         $this->studentName = $requestParams["sn"];
         $this->studentEmail = $requestParams["se"];
         $this->studentPoints = $requestParams["sp"];
+        $this->version = $requestParams["v"];
+        $this->quizTakingTimeInSeconds = $requestParams["ut"];
+        $this->formattedQuizTakingTime = $requestParams["fut"] ?: $this->FormatQuizTakingTime($this->quizTakingTimeInSeconds);
     }
 
     private function InitUserAttemptData()
@@ -54,12 +61,12 @@ class QuizResults
             return;
         }
 
-        $detailResultXml = stripslashes($requestParams["dr"]);
+        $detailResultXml = $requestParams["dr"];
         if ($detailResultXml)
         {
             $quizDetails = new QuizDetails();
-            $xsdFileName = self::XSD_HEAD;
-            $validateSuccessfully = @$quizDetails->loadFromXml($detailResultXml, $xsdFileName);
+            $xsdFileName = $this->GetSchemaByVersion($this->version);
+            $validateSuccessfully = $quizDetails->loadFromXml($detailResultXml, $xsdFileName, $this->version);
             if ($validateSuccessfully)
             {
                 $this->detailResult = $quizDetails;
@@ -67,7 +74,7 @@ class QuizResults
         }
     }
 
-    private function checkInvalidVariables()
+    private function CheckInvalidVariables()
     {
         $invalidVariables = array();
         if (empty($this->quizTitle))
@@ -92,5 +99,25 @@ class QuizResults
         {
             throw new InvalidArgumentException("Incorrect or missing variables: " . join(", ", $invalidVariables));
         }
+    }
+
+    private function FormatQuizTakingTime($quizTakingTimeInSeconds)
+    {
+        $format = new TimeIntervalFormat();
+        return $format->ApplyToSeconds($quizTakingTimeInSeconds);
+    }
+
+    /**
+     * @param string $version
+     * @return string
+     */
+    private function GetSchemaByVersion($version)
+    {
+        $validationSchema = self::XSD_OLDER_THAN_9;
+        if (Version::IsVersionNewerOrSameAs($version, '9.0'))
+        {
+            $validationSchema = self::XSD_CURRENT;
+        }
+        return $validationSchema;
     }
 }

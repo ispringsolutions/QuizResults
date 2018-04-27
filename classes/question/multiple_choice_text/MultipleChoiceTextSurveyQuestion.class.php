@@ -7,7 +7,7 @@ class MultipleChoiceTextSurveyQuestion extends Question
      */
     public $details;
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }

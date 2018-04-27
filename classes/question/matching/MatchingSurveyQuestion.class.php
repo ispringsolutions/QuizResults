@@ -14,7 +14,7 @@ class MatchingSurveyQuestion extends Question
      */
     public $responses;
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }

@@ -7,7 +7,7 @@ class MatchingQuestion extends MatchingSurveyQuestion
         return QuestionType::MATCHING;
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

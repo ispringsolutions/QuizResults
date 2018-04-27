@@ -10,27 +10,26 @@ class HotspotQuestion extends Question
         $hotspotsNode = $hotspotsNodeList->item(0);
         $hotspots = $this->getHotspotsFromXmlNode($hotspotsNode);
 
-        foreach ($hotspots as $hotspot)
-        {
-            if ($this->userAnswer != '')
-            {
-                $this->userAnswer .= '; ';
-            }
-            $this->userAnswer .= $hotspot->label . ' - ' . (($hotspot->marked) ? 'Marked' : 'Unmarked');
-        }
+        $this->userAnswer = $this->getHotspotsMarkedByUser($hotspots);
+        $this->correctAnswer = $this->getCorrectHotspots($hotspots);
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }
 
     /**
      * @param DOMElement $node
-     * @return Hotspot
+     * @return Hotspot[]
      */
-    private function getHotspotsFromXmlNode(DOMElement $node)
+    private function getHotspotsFromXmlNode(DOMElement $node = null)
     {
+        if (!$node)
+        {
+            return [];
+        }
+
         $hotspots = array();
         foreach ($node->childNodes as $hotspotNode)
         {
@@ -59,5 +58,45 @@ class HotspotQuestion extends Question
         $hotspot->initFromXmlNode($hotspotNode);
 
         return $hotspot;
+    }
+
+    /**
+     * @param Hotspot[] $hotspots
+     * @return string
+     */
+    private function getHotspotsMarkedByUser($hotspots)
+    {
+        $hotspots = array_filter(
+            $hotspots,
+            function (Hotspot $hotspot) { return $hotspot->marked; }
+        );
+        return $this->getHotspotsString($hotspots);
+    }
+
+    /**
+     * @param Hotspot[] $hotspots
+     * @return string
+     */
+    private function getCorrectHotspots($hotspots)
+    {
+        $hotspots = array_filter(
+            $hotspots,
+            function (Hotspot $hotspot) { return $hotspot->correct; }
+        );
+        return $this->getHotspotsString($hotspots);
+    }
+
+    /**
+     * @param Hotspot[] $hotspots
+     * @return string
+     */
+    private function getHotspotsString($hotspots)
+    {
+        $labels = array_map(
+            function (Hotspot $hotspot) { return $hotspot->label; },
+            $hotspots
+        );
+        $notEmptyLabels = array_filter($labels);
+        return implode('; ', $notEmptyLabels);
     }
 }

@@ -2,7 +2,7 @@
 
 class MultipleChoiceTextQuestion extends MultipleChoiceTextSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

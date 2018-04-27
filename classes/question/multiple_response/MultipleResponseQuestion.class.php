@@ -2,7 +2,7 @@
 
 class MultipleResponseQuestion extends MultipleResponseSurveyQuestion
 {
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }

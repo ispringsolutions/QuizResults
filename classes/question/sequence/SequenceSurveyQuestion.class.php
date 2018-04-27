@@ -7,7 +7,7 @@ class SequenceSurveyQuestion extends Question
      */
     public $answers;
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return false;
     }
@@ -17,7 +17,7 @@ class SequenceSurveyQuestion extends Question
         parent::initFromXmlNode($node);
 
         $answersNode = $node->getElementsByTagName('answers')->item(0);
-        $answersList = $answersNode->getElementsByTagName('answer');
+        $answersList = $answersNode ? $answersNode->getElementsByTagName('answer') : [];
 
         for ($i = 0; $i < $answersList->length; ++$i)
         {
@@ -31,7 +31,7 @@ class SequenceSurveyQuestion extends Question
         $userAnswer = array();
         foreach ($this->answers as $answer)
         {
-            $userAnswer[$answer->userDefinedPosition] = $answer;
+            $userAnswer[$this->getUserAnswerIndex($answer)] = $answer;
         }
 
         $answersCount = count($userAnswer);
@@ -48,7 +48,19 @@ class SequenceSurveyQuestion extends Question
     protected function createAnswer($index)
     {
         $answer = new SequenceSurveyAnswer();
+        $answer->index = $index;
         $answer->userDefinedPosition = $index;
         return $answer;
+    }
+
+    /**
+     * @param SequenceSurveyAnswer $answer
+     * @return int
+     */
+    private function getUserAnswerIndex($answer)
+    {
+        return isset($answer->userDefinedPosition)
+            ? $answer->userDefinedPosition
+            : $answer->index;
     }
 }

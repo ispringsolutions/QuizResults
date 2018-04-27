@@ -2,22 +2,24 @@
 
 class WordBankSurveyDetails
 {
+    private static $wordTagNames = array(
+        'word',
+        'blank'
+    );
+
     public $items;
 
     public function initFromXmlNode(DOMElement $node)
     {
-        $childNodes = $node->getElementsByTagName($this->getWordTagName());
-        foreach ($childNodes as $childNode)
+        foreach ($node->childNodes as $childNode)
         {
-            $word = $this->createWord();
-            $word->initFromXmlNode($childNode);
-            $this->items[] = $word;
+            if (in_array($childNode->tagName, self::$wordTagNames))
+            {
+                $word = $this->createWord();
+                $word->initFromXmlNode($childNode);
+                $this->items[] = $word;
+            }
         }
-    }
-
-    protected function getWordTagName()
-    {
-        return 'blank';
     }
 
     protected function createWord()

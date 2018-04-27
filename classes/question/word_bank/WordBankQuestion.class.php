@@ -1,13 +1,13 @@
 <?php
 
-class WordBankQuestion extends WorkBankSurveyQuestion
+class WordBankQuestion extends WordBankSurveyQuestion
 {
     public function getType()
     {
         return QuestionType::WORD_BANK;
     }
 
-    public function isGraded()
+    public function isGradedByDefault()
     {
         return true;
     }
