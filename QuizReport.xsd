@@ -555,7 +555,7 @@
     </xs:complexType>
     <xs:complexType name="LikertScaleMatch">
         <xs:attribute name="statementIndex" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="labelIndex" type="xs:unsignedInt" use="required"/>
+        <xs:attribute name="labelIndex" type="xs:int" use="required"/>
     </xs:complexType>
     <xs:complexType name="LikertScaleUserAnswer">
         <xs:sequence>
