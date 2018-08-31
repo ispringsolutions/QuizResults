@@ -607,6 +607,7 @@
     <xs:simpleType name="ST_status">
         <xs:restriction base="xs:string">
             <xs:enumeration value="correct"/>
+            <xs:enumeration value="partially"/>
             <xs:enumeration value="incorrect"/>
             <xs:enumeration value="notAnswered"/>
             <xs:enumeration value="answered"/>
