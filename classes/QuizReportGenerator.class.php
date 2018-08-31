@@ -36,14 +36,23 @@ class QuizReportGenerator
     {
         $header = 'Quiz Name: ' . $this->quizResults->quizTitle . PHP_EOL;
 
-        if ($this->quizResults->studentName)
+        // Some old quiz versions don't contain the student name and email
+        // in the taker info fields, instead the name and email are sent
+        // using special request parameters. The following code compensates
+        // for that case.
+        if (!$this->doesQuizTakerInfoContainEmail())
         {
-            $header .= 'User Name: ' . $this->quizResults->studentName . PHP_EOL;
+            if ($this->quizResults->studentName)
+            {
+                $header .= 'User Name: ' . $this->quizResults->studentName . PHP_EOL;
+            }
+            if ($this->quizResults->studentEmail)
+            {
+                $header .= 'User Email: ' . $this->quizResults->studentEmail . PHP_EOL;
+            }
         }
-        if ($this->quizResults->studentEmail)
-        {
-            $header .= 'User Email: ' . $this->quizResults->studentEmail . PHP_EOL;
-        }
+
+        $header .= $this->getTakerInfoFields();
 
         if ($this->quizResults->quizType == QuizType::GRADED)
         {
@@ -60,8 +69,6 @@ class QuizReportGenerator
         {
             $header .= "Quiz Finished At: " . $this->quizResults->detailResult->finishedAt . PHP_EOL;
         }
-        
-        $header .= $this->getTakerInfoFields();
 
         return $header . PHP_EOL;
     }
@@ -92,6 +99,9 @@ class QuizReportGenerator
         $this->takerInfo = $takerInfo;
     }
 
+    /**
+     * @return string
+     */
     private function getTakerInfoFields()
     {
         $result = '';
@@ -101,5 +111,13 @@ class QuizReportGenerator
             $result .= "{$field->getTitle()}: {$field->getValue()}" . PHP_EOL;
         }
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    private function doesQuizTakerInfoContainEmail()
+    {
+        return $this->takerInfo && $this->takerInfo->doesContainUserEmail();
     }
 }

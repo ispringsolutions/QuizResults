@@ -19,7 +19,7 @@ class QuizTakerInfo
 
     public function initUserInResults(QuizResults $quizResults)
     {
-        if (!$this->doesContainUserInfo())
+        if (!$this->doesContainUserEmail())
         {
             return;
         }
@@ -38,7 +38,10 @@ class QuizTakerInfo
         $this->shouldSkipAbsentFields = $shouldSkipAbsentFields;
     }
 
-    private function doesContainUserInfo()
+    /**
+     * @return bool
+     */
+    public function doesContainUserEmail()
     {
         return !empty($this->fieldValues[self::FIELD_USER_NAME])
             || !empty($this->fieldValues[self::FIELD_USER_EMAIL]);
@@ -91,23 +94,11 @@ class QuizTakerInfo
         $result = array();
         foreach ($this->fieldTitles as $fieldId => $fieldTitle)
         {
-            if ($this->isUserInfoField($fieldId))
-            {
-                continue;
-            }
-
             $result[$fieldId] = new QuizTakerInfoField(
                 $fieldTitle,
                 $this->fieldValues[$fieldId]
             );
         }
         return $result;
-    }
-
-    private function isUserInfoField($fieldId)
-    {
-        $fieldId = strtoupper($fieldId);
-        return $fieldId === self::FIELD_USER_NAME
-            || $fieldId === self::FIELD_USER_EMAIL;
     }
 }
