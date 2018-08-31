@@ -3,23 +3,37 @@
 class QuizTakerInfoFactory
 {
     const PARAM_FIELDS = 'vt';
+    const PARAM_QUIZ_PAGE_ARGS = 'pv';
 
     public static function CreateFromRequest($requestParameters)
     {
-        $fieldTitles = self::getFieldTitlesFromParameters($requestParameters);
+        $shouldSkipAbsentFields = false;
+        $fieldTitles = self::getCustomizedFieldTitles($requestParameters);
         if (!$fieldTitles)
         {
-            return null;
+            // When a standard field is not present in parameters it should not show in result
+            $shouldSkipAbsentFields = true;
+            $fieldTitles = self::getStandardFieldTitles();
         }
-        unset($requestParameters[self::PARAM_FIELDS]);
-        return new QuizTakerInfo($fieldTitles, $requestParameters);
+
+        $parametersOfPageQuizHasBeenLoadedOn = self::getJsonEncodedParam($requestParameters, self::PARAM_QUIZ_PAGE_ARGS);
+
+        unset(
+            $requestParameters[self::PARAM_FIELDS],
+            $requestParameters[self::PARAM_QUIZ_PAGE_ARGS]
+        );
+
+        $requestParameters = array_merge($parametersOfPageQuizHasBeenLoadedOn, $requestParameters);
+        $result = new QuizTakerInfo($fieldTitles, $requestParameters);
+        $result->shouldSkipAbsentFields($shouldSkipAbsentFields);
+        return $result;
     }
 
     /**
      * @param array $requestParameters
-     * @return array
+     * @return array|null
      */
-    private static function getFieldTitlesFromParameters($requestParameters)
+    private static function getCustomizedFieldTitles($requestParameters)
     {
         if (!self::hasValidFieldTitlesParameter($requestParameters))
         {
@@ -45,6 +59,23 @@ class QuizTakerInfoFactory
     }
 
     /**
+     * @param array $requestParameters
+     * @return array
+     */
+    private static function getStandardFieldTitles()
+    {
+        return array(
+            'USER_NAME' => 'Name',
+            'USER_EMAIL' => 'Email',
+            'COMPANY' => 'Company',
+            'DEPARTMENT' => 'Department',
+            'JOBTITLE' => 'Job Title',
+            'PHONE' => 'Phone',
+            'ADDRESS' => 'Address',
+        );
+    }
+
+    /**
      * @param $requestParameters
      * @return bool
      */
@@ -57,5 +88,28 @@ class QuizTakerInfoFactory
     private static function isValidFieldInfo($fieldInfo)
     {
         return isset($fieldInfo['id']);
+    }
+
+    /**
+     * @param array $requestParameters
+     * @param string $name
+     * @return array
+     */
+    private static function getJsonEncodedParam($requestParameters, $paramName)
+    {
+        $result = array();
+        if (empty($requestParameters[$paramName]))
+        {
+            return $result;
+        }
+
+        $encodedParam = $requestParameters[$paramName];
+        $decodedParam = json_decode($encodedParam);
+        if (is_array($decodedParam))
+        {
+            $result = $decodedParam;
+        }
+
+        return $result;
     }
 }

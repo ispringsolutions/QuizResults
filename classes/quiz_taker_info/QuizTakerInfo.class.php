@@ -6,6 +6,7 @@ class QuizTakerInfo
     private $fieldTitles;
     private $fieldValues;
     private $replacer;
+    private $shouldSkipAbsentFields;
 
     const FIELD_USER_NAME = 'USER_NAME';
     const FIELD_USER_EMAIL = 'USER_EMAIL';
@@ -29,6 +30,14 @@ class QuizTakerInfo
             ? $this->fieldValues[self::FIELD_USER_EMAIL] : null;
     }
 
+    /**
+     * @param bool $shouldSkipAbsentFields
+     */
+    public function shouldSkipAbsentFields($shouldSkipAbsentFields)
+    {
+        $this->shouldSkipAbsentFields = $shouldSkipAbsentFields;
+    }
+
     private function doesContainUserInfo()
     {
         return !empty($this->fieldValues[self::FIELD_USER_NAME])
@@ -44,6 +53,11 @@ class QuizTakerInfo
         $result = array();
         foreach ($this->fieldTitles as $fieldId => $fieldTitle)
         {
+            if ($this->shouldSkipAbsentFields && !isset($arrayContainingFieldValues[$fieldId]))
+            {
+                continue;
+            }
+
             $result[$fieldId] = !empty($arrayContainingFieldValues[$fieldId])
                 ? $arrayContainingFieldValues[$fieldId]
                 : '';
