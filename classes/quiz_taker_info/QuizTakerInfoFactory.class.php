@@ -5,6 +5,16 @@ class QuizTakerInfoFactory
     const PARAM_FIELDS = 'vt';
     const PARAM_QUIZ_PAGE_ARGS = 'pv';
 
+    private static $standardFieldTitles = array(
+        'USER_NAME' => 'Name',
+        'USER_EMAIL' => 'Email',
+        'COMPANY' => 'Company',
+        'DEPARTMENT' => 'Department',
+        'JOBTITLE' => 'Job Title',
+        'PHONE' => 'Phone',
+        'ADDRESS' => 'Address',
+    );
+
     public static function CreateFromRequest($requestParameters)
     {
         $shouldSkipAbsentFields = false;
@@ -13,7 +23,7 @@ class QuizTakerInfoFactory
         {
             // When a standard field is not present in parameters it should not show in result
             $shouldSkipAbsentFields = true;
-            $fieldTitles = self::getStandardFieldTitles();
+            $fieldTitles = self::$standardFieldTitles;
         }
 
         $parametersOfPageQuizHasBeenLoadedOn = self::getJsonEncodedParam($requestParameters, self::PARAM_QUIZ_PAGE_ARGS);
@@ -56,23 +66,6 @@ class QuizTakerInfoFactory
             $result[$id] = $title;
         }
         return $result;
-    }
-
-    /**
-     * @param array $requestParameters
-     * @return array
-     */
-    private static function getStandardFieldTitles()
-    {
-        return array(
-            'USER_NAME' => 'Name',
-            'USER_EMAIL' => 'Email',
-            'COMPANY' => 'Company',
-            'DEPARTMENT' => 'Department',
-            'JOBTITLE' => 'Job Title',
-            'PHONE' => 'Phone',
-            'ADDRESS' => 'Address',
-        );
     }
 
     /**
