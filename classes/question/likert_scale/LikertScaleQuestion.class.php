@@ -40,7 +40,8 @@ class LikertScaleQuestion extends Question
         {
             $label = '';
             $userAnswer = $this->getUserAnswerByStatementIndex($userAnswers, $index);
-            if ($userAnswer)
+            $hasAnswerBeenGiven = $userAnswer && !is_null($userAnswer->labelIndex) && $userAnswer->labelIndex >= 0;
+            if ($hasAnswerBeenGiven)
             {
                 $label = $labels[$userAnswer->labelIndex];
             }
@@ -49,8 +50,8 @@ class LikertScaleQuestion extends Question
             {
                 $this->userAnswer .= '; ';
             }
-            $this->userAnswer .= $statement . ' - ' . $label . $this->getLabelIndexText($userAnswer);
-
+            $this->userAnswer .= $statement . ' - ' .
+                                 ($hasAnswerBeenGiven ? ($label . $this->getLabelIndexText($userAnswer)) : '');
             ++$index;
         }
     }
