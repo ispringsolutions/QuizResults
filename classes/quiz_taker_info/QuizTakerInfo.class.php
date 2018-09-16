@@ -5,6 +5,7 @@ class QuizTakerInfo
     private $fields;
     private $fieldTitles;
     private $fieldValues;
+    private $isFieldPresentInValues;
     private $replacer;
     private $shouldSkipAbsentFields;
 
@@ -15,6 +16,7 @@ class QuizTakerInfo
     {
         $this->fieldTitles = $fieldTitles;
         $this->fieldValues = $this->collectKnownFieldValues($fieldValues);
+        $this->isFieldPresentInValues = $this->collectFieldStates($fieldValues);
     }
 
     public function initUserInResults(QuizResults $quizResults)
@@ -56,14 +58,23 @@ class QuizTakerInfo
         $result = array();
         foreach ($this->fieldTitles as $fieldId => $fieldTitle)
         {
-            if ($this->shouldSkipAbsentFields && !isset($arrayContainingFieldValues[$fieldId]))
-            {
-                continue;
-            }
-
             $result[$fieldId] = !empty($arrayContainingFieldValues[$fieldId])
                 ? $arrayContainingFieldValues[$fieldId]
                 : '';
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $arrayContainingFieldValues
+     * @return bool[]
+     */
+    private function collectFieldStates($arrayContainingFieldValues)
+    {
+        $result = array();
+        foreach ($this->fieldTitles as $fieldId => $fieldTitle)
+        {
+            $result[$fieldId] = array_key_exists($fieldId, $arrayContainingFieldValues);
         }
         return $result;
     }
@@ -86,7 +97,7 @@ class QuizTakerInfo
         {
             $this->fields = $this->createFields();
         }
-        return $this->fields;
+        return $this->optionallyHideNotProvidedFields($this->fields);
     }
 
     private function createFields()
@@ -98,6 +109,28 @@ class QuizTakerInfo
                 $fieldTitle,
                 $this->fieldValues[$fieldId]
             );
+        }
+        return $result;
+    }
+
+    /**
+     * @param QuizTakerInfoField[] $fields
+     * @return QuizTakerInfoField[]
+     */
+    private function optionallyHideNotProvidedFields(array $fields)
+    {
+        if (!$this->shouldSkipAbsentFields)
+        {
+            return $fields;
+        }
+
+        $result = array();
+        foreach ($fields as $fieldId => $field)
+        {
+            if (!empty($this->isFieldPresentInValues[$fieldId]))
+            {
+                $result[$fieldId] = $field;
+            }
         }
         return $result;
     }
