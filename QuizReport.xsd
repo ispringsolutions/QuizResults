@@ -552,6 +552,7 @@
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="label" type="xs:string"/>
         </xs:sequence>
+        <xs:attribute name="numberFromZero" type="xs:boolean" />
     </xs:complexType>
     <xs:complexType name="LikertScaleMatch">
         <xs:attribute name="statementIndex" type="xs:unsignedInt" use="required"/>
@@ -607,6 +608,7 @@
     <xs:simpleType name="ST_status">
         <xs:restriction base="xs:string">
             <xs:enumeration value="correct"/>
+            <xs:enumeration value="partially"/>
             <xs:enumeration value="incorrect"/>
             <xs:enumeration value="notAnswered"/>
             <xs:enumeration value="answered"/>

@@ -5,7 +5,9 @@ class QuizTakerInfo
     private $fields;
     private $fieldTitles;
     private $fieldValues;
+    private $isFieldPresentInValues;
     private $replacer;
+    private $shouldSkipAbsentFields;
 
     const FIELD_USER_NAME = 'USER_NAME';
     const FIELD_USER_EMAIL = 'USER_EMAIL';
@@ -14,11 +16,12 @@ class QuizTakerInfo
     {
         $this->fieldTitles = $fieldTitles;
         $this->fieldValues = $this->collectKnownFieldValues($fieldValues);
+        $this->isFieldPresentInValues = $this->collectFieldStates($fieldValues);
     }
 
     public function initUserInResults(QuizResults $quizResults)
     {
-        if (!$this->doesContainUserInfo())
+        if (!$this->doesContainUserEmail())
         {
             return;
         }
@@ -29,7 +32,18 @@ class QuizTakerInfo
             ? $this->fieldValues[self::FIELD_USER_EMAIL] : null;
     }
 
-    private function doesContainUserInfo()
+    /**
+     * @param bool $shouldSkipAbsentFields
+     */
+    public function shouldSkipAbsentFields($shouldSkipAbsentFields)
+    {
+        $this->shouldSkipAbsentFields = $shouldSkipAbsentFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function doesContainUserEmail()
     {
         return !empty($this->fieldValues[self::FIELD_USER_NAME])
             || !empty($this->fieldValues[self::FIELD_USER_EMAIL]);
@@ -47,6 +61,20 @@ class QuizTakerInfo
             $result[$fieldId] = !empty($arrayContainingFieldValues[$fieldId])
                 ? $arrayContainingFieldValues[$fieldId]
                 : '';
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $arrayContainingFieldValues
+     * @return bool[]
+     */
+    private function collectFieldStates($arrayContainingFieldValues)
+    {
+        $result = array();
+        foreach ($this->fieldTitles as $fieldId => $fieldTitle)
+        {
+            $result[$fieldId] = array_key_exists($fieldId, $arrayContainingFieldValues);
         }
         return $result;
     }
@@ -69,7 +97,7 @@ class QuizTakerInfo
         {
             $this->fields = $this->createFields();
         }
-        return $this->fields;
+        return $this->optionallyHideNotProvidedFields($this->fields);
     }
 
     private function createFields()
@@ -77,11 +105,6 @@ class QuizTakerInfo
         $result = array();
         foreach ($this->fieldTitles as $fieldId => $fieldTitle)
         {
-            if ($this->isUserInfoField($fieldId))
-            {
-                continue;
-            }
-
             $result[$fieldId] = new QuizTakerInfoField(
                 $fieldTitle,
                 $this->fieldValues[$fieldId]
@@ -90,10 +113,25 @@ class QuizTakerInfo
         return $result;
     }
 
-    private function isUserInfoField($fieldId)
+    /**
+     * @param QuizTakerInfoField[] $fields
+     * @return QuizTakerInfoField[]
+     */
+    private function optionallyHideNotProvidedFields(array $fields)
     {
-        $fieldId = strtoupper($fieldId);
-        return $fieldId === self::FIELD_USER_NAME
-            || $fieldId === self::FIELD_USER_EMAIL;
+        if (!$this->shouldSkipAbsentFields)
+        {
+            return $fields;
+        }
+
+        $result = array();
+        foreach ($fields as $fieldId => $field)
+        {
+            if (!empty($this->isFieldPresentInValues[$fieldId]))
+            {
+                $result[$fieldId] = $field;
+            }
+        }
+        return $result;
     }
 }

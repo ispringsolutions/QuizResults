@@ -2,6 +2,8 @@
 
 class LikertScaleQuestion extends Question
 {
+    private $areLabelsIndexedFromZero = false;
+
     public function getType()
     {
         return QuestionType::LIKERT_SCALE;
@@ -21,6 +23,7 @@ class LikertScaleQuestion extends Question
         $statements = $statementsCollection->toArray();
 
         $labelsNode = $node->getElementsByTagName('scaleLabels')->item(0);
+        $this->areLabelsIndexedFromZero = XmlUtils::getElementBooleanAttribute($labelsNode, 'numberFromZero');
         $labelsCollection = TextCollection::fromXmlNode($labelsNode, 'label');
         $labels = $labelsCollection->toArray();
 
@@ -37,7 +40,8 @@ class LikertScaleQuestion extends Question
         {
             $label = '';
             $userAnswer = $this->getUserAnswerByStatementIndex($userAnswers, $index);
-            if ($userAnswer)
+            $hasAnswerBeenGiven = $userAnswer && !is_null($userAnswer->labelIndex) && $userAnswer->labelIndex >= 0;
+            if ($hasAnswerBeenGiven)
             {
                 $label = $labels[$userAnswer->labelIndex];
             }
@@ -46,8 +50,8 @@ class LikertScaleQuestion extends Question
             {
                 $this->userAnswer .= '; ';
             }
-            $this->userAnswer .= $statement . ' - ' . $label;
-
+            $this->userAnswer .= $statement . ' - ' .
+                                 ($hasAnswerBeenGiven ? ($label . $this->getLabelIndexText($userAnswer)) : '');
             ++$index;
         }
     }
@@ -90,5 +94,23 @@ class LikertScaleQuestion extends Question
         }
 
         return $out;
+    }
+
+    /**
+     * @param LikertScaleMatch|null $userAnswer
+     */
+    private function getLabelIndexText(LikertScaleMatch $userAnswer = null)
+    {
+        if (!$userAnswer)
+        {
+            return '';
+        }
+
+        $index = $userAnswer->labelIndex;
+        if (!$this->areLabelsIndexedFromZero)
+        {
+            ++$index;
+        }
+        return " ($index)";
     }
 }
