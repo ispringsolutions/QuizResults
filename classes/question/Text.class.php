@@ -30,7 +30,7 @@ class Text
         }
         else
         {
-            $text = $node->textContent;
+            $text = XmlUtils::getElementText($node);
         }
 
         $this->value = $text ? trim($text) : '';

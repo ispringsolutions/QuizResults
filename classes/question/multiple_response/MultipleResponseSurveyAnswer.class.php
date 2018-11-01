@@ -9,7 +9,7 @@ class MultipleResponseSurveyAnswer
     public function initFromXmlNode(DOMElement $node)
     {
         $this->selected = $node->getAttribute('selected') == 'true';
-        $this->text = trim($node->textContent);
+        $this->text = XmlUtils::getElementText($node);
 
         if ($node->hasAttribute('customAnswer'))
         {

@@ -10,6 +10,6 @@ class SequenceSurveyAnswer
 
     public function initFromXmlNode(DOMElement $node)
     {
-        $this->text = trim($node->textContent);
+        $this->text = XmlUtils::getElementText($node);
     }
 }
