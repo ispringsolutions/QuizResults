@@ -3,12 +3,25 @@
 class QuizDetails
 {
     const FINISH_TIMESTAMP_ATTRIBUTE = 'finishTimestamp';
+    const IS_TEST_PASSED_ATTRIBUTE = 'passed';
+    const PASSING_PERCENT_TAG = 'passingPercent';
+    const STUDENT_PERCENT_ATTRIBUTE = 'percent';
+
 
     /** @var string|null */
     public $finishedAt;
 
     /** @var Question[] */
     public $questions;
+
+    /** @var bool|null */
+    public $isTestPassed = null;
+
+    /** @var float|null */
+    public $studentPercent = null;
+
+    /** @var float|null  */
+    public $passingPercent = null;
 
     /**
      * init from xml
@@ -33,10 +46,25 @@ class QuizDetails
         }
 
         $summaryNode = $doc->getElementsByTagName('summary')->item(0);
-        if ($summaryNode && $summaryNode->hasAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE))
+        if ($summaryNode)
         {
-            $this->finishedAt = $summaryNode->getAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE);
+            if ($summaryNode->hasAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE))
+            {
+                $this->finishedAt = $summaryNode->getAttribute(self::FINISH_TIMESTAMP_ATTRIBUTE);
+            }
+            $this->isTestPassed = XmlUtils::getElementBooleanAttribute($summaryNode, self::IS_TEST_PASSED_ATTRIBUTE);
+            if ($summaryNode->hasAttribute(self::STUDENT_PERCENT_ATTRIBUTE))
+            {
+                $this->studentPercent = $summaryNode->getAttribute(self::STUDENT_PERCENT_ATTRIBUTE);
+            }
         }
+
+        $passingPercentNode = $doc->getElementsByTagName(self::PASSING_PERCENT_TAG)->item(0);
+        if ($passingPercentNode)
+        {
+            $this->passingPercent = $passingPercentNode->textContent;
+        }
+
         $questionsNode = $doc->getElementsByTagName('questions')->item(0);
         $this->exportQuestions($questionsNode, $version);
 

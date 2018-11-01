@@ -358,6 +358,7 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="passed" type="xs:boolean" />
     </xs:complexType>
     <xs:element name="question" type="QuestionBase" abstract="true"/>
     <xs:element name="trueFalseQuestion" type="TrueFalseQuestion" substitutionGroup="question"/>

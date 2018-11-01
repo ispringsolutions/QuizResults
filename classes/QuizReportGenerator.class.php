@@ -56,8 +56,9 @@ class QuizReportGenerator
 
         if ($this->quizResults->quizType == QuizType::GRADED)
         {
-            $header .= 'Passing Score: ' . $this->quizResults->passingScore . PHP_EOL;
-            $header .= 'User Score: ' . $this->quizResults->studentPoints . PHP_EOL;
+            $header .= 'Result: ' . $this->quizResults->formatStatus() . PHP_EOL;
+            $header .= 'User Score: ' . $this->quizResults->formatUserScore() . PHP_EOL;
+            $header .= 'Passing Score: ' . $this->quizResults->formatPassingScore() . PHP_EOL;
         }
 
         if ($this->quizResults->formattedQuizTakingTime)

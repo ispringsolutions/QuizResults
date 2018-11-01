@@ -8,6 +8,8 @@ class QuizResults
     public $quizType;
     public $quizTitle;
     public $passingScore;
+    public $passingScorePercent;
+    public $totalScore;
     public $studentName;
     public $studentEmail;
     public $studentPoints;
@@ -15,17 +17,73 @@ class QuizResults
     public $formattedQuizTakingTime;
     public $version;
 
-    /**
-     * @var QuizDetails
-     */
+    /** @var QuizDetails */
     public $detailResult;
+
+    /** @var QuizStatus */
+    private $quizStatus;
 
     public function InitFromRequest($requestParams)
     {
         $this->ReadFromRequestParams($requestParams);
         $this->CheckInvalidVariables();
-        $this->InitUserAttemptData();
         $this->InitDetailResult($requestParams);
+        $this->InitUserAttemptData();
+    }
+
+    /**
+     * .@return string
+     */
+    public function formatUserScore()
+    {
+        $totalPoints = $this->quizStatus->getTotalPoints();
+        $studentPercent = $this->quizStatus->getStudentPercent();
+
+        /** @var QuizStatus|null */
+        if ($totalPoints > 0)
+        {
+            $result = "{$this->quizStatus->getStudentPoints()} / {$totalPoints} ({$studentPercent}%)";
+        }
+        elseif (!is_null($studentPercent))
+        {
+            $result = "{$studentPercent}%";
+        }
+        else
+        {
+            $result = "{$this->quizStatus->getStudentPoints()}";
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function formatPassingScore()
+    {
+        $passingPoints = $this->quizStatus->getPassingPoints();
+        $passingPercent = $this->quizStatus->getPassingPercent();
+        if (!is_null($passingPoints) && !is_null($passingPercent))
+        {
+            $result = "{$passingPoints} ({$passingPercent}%)";
+        }
+        elseif (!is_null($passingPoints))
+        {
+            $result = $passingPoints;
+        }
+        else
+        {
+            $result = "{$passingPercent}%";
+        }
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function formatStatus()
+    {
+        return $this->quizStatus->isPassed() ? 'Passed' : 'Failed';
     }
 
     private function ReadFromRequestParams($requestParams)
@@ -40,10 +98,13 @@ class QuizResults
 
         $this->quizTitle = $requestParams["qt"];
         $this->passingScore = $requestParams["ps"];
+        $this->passingPercent = $requestParams["psp"];
+        $this->totalScore = $requestParams["tp"];
 
         $this->studentName = $requestParams["sn"];
         $this->studentEmail = $requestParams["se"];
         $this->studentPoints = $requestParams["sp"];
+        $this->quizStatus = new QuizStatus($this->quizType);
         $this->version = $requestParams["v"];
         $this->quizTakingTimeInSeconds = $requestParams["ut"];
         $this->formattedQuizTakingTime = $requestParams["fut"] ?: $this->FormatQuizTakingTime($this->quizTakingTimeInSeconds);
@@ -52,6 +113,25 @@ class QuizResults
     private function InitUserAttemptData()
     {
         $this->studentPoints = floatval($this->studentPoints);
+        $this->quizStatus->setPassingPoints($this->passingScore)
+                         ->setPassingPercent($this->passingScorePercent)
+                         ->setTotalPoints($this->totalScore)
+                         ->setStudentPoints($this->studentPoints);
+
+        if (!is_null($this->detailResult->passingPercent))
+        {
+            $this->quizStatus->setPassingPercent($this->detailResult->passingPercent);
+        }
+
+        if (!is_null($this->detailResult->studentPercent))
+        {
+            $this->quizStatus->setStudentPercent($this->detailResult->studentPercent);
+        }
+
+        if (!is_null($this->detailResult->isTestPassed))
+        {
+            $this->quizStatus->setPassedStatus($this->detailResult->isTestPassed);
+        }
     }
 
     private function InitDetailResult($requestParams)
