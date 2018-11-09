@@ -5,6 +5,8 @@ class QuizResults
     const XSD_CURRENT = "QuizReport.xsd";
     const XSD_OLDER_THAN_9 = "QuizReport_8.xsd";
 
+    const VERSION_9 = '9.0';
+
     public $quizType;
     public $quizTitle;
     public $passingScore;
@@ -118,6 +120,14 @@ class QuizResults
                          ->setTotalPoints($this->totalScore)
                          ->setStudentPoints($this->studentPoints);
 
+        if (Version::IsVersionNewerOrSameAs($this->version, self::VERSION_9))
+        {
+            $this->AddAttemptDataFromSummary();
+        }
+    }
+
+    private function AddAttemptDataFromSummary()
+    {
         if (!is_null($this->detailResult->passingPercent))
         {
             $this->quizStatus->setPassingPercent($this->detailResult->passingPercent);
@@ -194,7 +204,7 @@ class QuizResults
     private function GetSchemaByVersion($version)
     {
         $validationSchema = self::XSD_OLDER_THAN_9;
-        if (Version::IsVersionNewerOrSameAs($version, '9.0'))
+        if (Version::IsVersionNewerOrSameAs($version, self::VERSION_9))
         {
             $validationSchema = self::XSD_CURRENT;
         }
