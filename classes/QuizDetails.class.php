@@ -79,6 +79,11 @@ class QuizDetails
     {
         foreach ($questionsNode->childNodes as $questionNode)
         {
+            if (!$questionNode instanceof DOMElement)
+            {
+                continue;
+            }
+
             $question = QuestionFactory::CreateFromXmlNode($questionNode, $version);
             if ($question)
             {
