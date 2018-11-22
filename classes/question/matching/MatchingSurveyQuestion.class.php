@@ -27,14 +27,14 @@ class MatchingSurveyQuestion extends Question
         $premisesList = $premisesNode->getElementsByTagName('premise');
         for ($i = 0; $i < $premisesList->length; ++$i)
         {
-            $this->premises[] = trim($premisesList->item($i)->textContent);
+            $this->premises[] = XmlUtils::getElementText($premisesList->item($i));
         }
 
         $responsesNode = $node->getElementsByTagName('responses')->item(0);
         $responsesList = $responsesNode->getElementsByTagName('response');
         for ($i = 0; $i < $responsesList->length; ++$i)
         {
-            $this->responses[] = trim($responsesList->item($i)->textContent);
+            $this->responses[] = XmlUtils::getElementText($responsesList->item($i));
         }
 
         $userAnswerMatches = array();

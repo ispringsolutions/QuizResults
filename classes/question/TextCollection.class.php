@@ -45,7 +45,7 @@ class TextCollection
         $itemsNodes = $node->getElementsByTagName($itemTagName);
         foreach ($itemsNodes as $itemNode)
         {
-            $this->addItem($itemNode->textContent);
+            $this->addItem(XmlUtils::getElementText($itemNode));
         }
     }
 

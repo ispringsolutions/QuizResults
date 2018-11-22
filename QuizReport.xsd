@@ -2,16 +2,22 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults"
            targetNamespace="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="TextWithEquation" mixed="true">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="text" type="xs:string"/>
-            <xs:element name="equation">
-                <xs:complexType>
-                    <xs:choice>
-                        <xs:element name="latex" type="xs:string"/>
-                    </xs:choice>
-                </xs:complexType>
-            </xs:element>
-        </xs:choice>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="text" type="xs:string"/>
+                <xs:element name="equation">
+                    <xs:complexType>
+                        <xs:choice>
+                            <xs:element name="latex" type="xs:string"/>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="picture" type="Picture" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Picture">
+        <xs:attribute name="altText" type="xs:string" />
     </xs:complexType>
     <xs:element name="quizReport">
         <xs:annotation>
@@ -358,6 +364,7 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="passed" type="xs:boolean" />
     </xs:complexType>
     <xs:element name="question" type="QuestionBase" abstract="true"/>
     <xs:element name="trueFalseQuestion" type="TrueFalseQuestion" substitutionGroup="question"/>

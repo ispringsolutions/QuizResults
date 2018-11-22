@@ -29,7 +29,7 @@ abstract class Question
         }
 
         $directionNode = $node->getElementsByTagName('direction')->item(0);
-        $directionSource = trim($directionNode ? $directionNode->textContent : '');
+        $directionSource = XmlUtils::getElementText($directionNode);
         $this->direction = str_replace("\n", PHP_EOL, $directionSource);
     }
 
