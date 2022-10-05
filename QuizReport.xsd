@@ -162,6 +162,7 @@
                 <xs:attribute name="correct" type="xs:boolean"/>
                 <xs:attribute name="selected" type="xs:boolean" use="required"/>
                 <xs:attribute name="customAnswer" type="xs:string"/>
+                <xs:attribute name="score" type="xs:double"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
