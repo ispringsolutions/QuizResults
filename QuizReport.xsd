@@ -412,6 +412,13 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="blank" type="FillInTheBlankDetailsBlank"/>
             <xs:element name="text" type="xs:string"/>
+			<xs:element name="equation">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="latex" type="xs:string"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="FillInTheBlankDetailsBlank">
@@ -432,6 +439,13 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="blank" type="MultipleChoiceTextDetailsBlank"/>
             <xs:element name="text" type="xs:string"/>
+            <xs:element name="equation">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="latex" type="xs:string"/>
+                     </xs:choice>
+                </xs:complexType>
+            </xs:element>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="MultipleChoiceTextQuestion">
@@ -460,6 +474,13 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="blank" type="WordBankDetailsWord"/>
             <xs:element name="text" type="xs:string"/>
+            <xs:element name="equation">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="latex" type="xs:string"/>
+                     </xs:choice>
+                </xs:complexType>
+            </xs:element>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="WordBankDetailsWord">
