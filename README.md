@@ -1,6 +1,6 @@
 # How to Send Quiz Results to Server
 
-iSpring QuizMaker provides a variety of ways to deliver results. If a [Learning Management System](https://www.ispringsolutions.com/products/ispring-learn) that automatically tracks quiz progress is not an option in your case, you can also send results via email or send quiz results to server, which will be the main topic of this article.
+iSpring QuizMaker provides a variety of ways to deliver results. If a [Learning Management System](https://www.ispringsolutions.com/ispring-learn) that automatically tracks quiz progress is not an option in your case, you can also send results via email or send quiz results to server, which will be the main topic of this article.
 
 With this approach, you may build your own tracking system on your server. This advanced solution will require additional development and may incur extra costs, depending on the requirements for creating your custom system.
 
