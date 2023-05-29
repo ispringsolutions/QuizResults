@@ -1,638 +1,585 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults"
-           targetNamespace="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults" elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="TextWithEquation" mixed="true">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="text" type="xs:string"/>
-                <xs:element name="equation">
-                    <xs:complexType>
-                        <xs:choice>
-                            <xs:element name="latex" type="xs:string"/>
-                        </xs:choice>
-                    </xs:complexType>
-                </xs:element>
-            </xs:choice>
-            <xs:element name="picture" type="Picture" minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="Picture">
-        <xs:attribute name="altText" type="xs:string" />
-    </xs:complexType>
-    <xs:element name="quizReport">
-        <xs:annotation>
-            <xs:documentation>quiz report</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:complexContent>
-                <xs:extension base="QuizReport"/>
-            </xs:complexContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:complexType name="QuizReport">
-        <xs:all>
-            <xs:element name="quizSettings" type="QuizSettings"/>
-            <xs:element name="summary" type="QuizSummary"/>
-            <xs:element name="questions" type="Questions"/>
-            <xs:element name="groups" type="GroupsResult"/>
-        </xs:all>
-        <xs:attribute name="version" type="xs:unsignedInt" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Questions">
-        <xs:annotation>
-            <xs:documentation>user answers</xs:documentation>
-        </xs:annotation>
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="question"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="QuestionBase" abstract="true">
-        <xs:sequence>
-            <xs:element name="direction" type="TextWithEquation"/>
-            <xs:element name="feedback" type="TextWithEquation" minOccurs="0"/>
-        </xs:sequence>
-        <xs:attribute name="id" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:minLength value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="evaluationEnabled" type="xs:boolean" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="Question" abstract="true">
-        <xs:complexContent>
-            <xs:extension base="QuestionBase">
-                <xs:attribute name="maxPoints" type="xs:float"/>
-                <xs:attribute name="maxAttempts">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:unsignedInt"/>
-                    </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="usedAttempts" type="xs:unsignedInt"/>
-                <xs:attribute name="awardedPoints" type="xs:double"/>
-                <xs:attribute name="status" type="ST_status" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="TrueFalseQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="answers">
-                        <xs:complexType>
-                            <xs:complexContent>
-                                <xs:extension base="TrueFalseAnswers"/>
-                            </xs:complexContent>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceAnswers">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="answer" type="MultipleChoiceAnswer"/>
-        </xs:sequence>
-        <xs:attribute name="correctAnswerIndex" type="xs:integer"/>
-        <xs:attribute name="userAnswerIndex" type="xs:integer"/>
-    </xs:complexType>
-    <xs:complexType name="TrueFalseAnswers">
-        <xs:sequence minOccurs="2" maxOccurs="2">
-            <xs:element name="answer">
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="TextWithEquation"/>
-                    </xs:complexContent>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-        <xs:attribute name="correctAnswerIndex">
-            <xs:simpleType>
-                <xs:restriction base="xs:unsignedInt">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="userAnswerIndex">
-            <xs:simpleType>
-                <xs:restriction base="xs:unsignedInt">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceAnswer">
-        <xs:complexContent>
-            <xs:extension base="TextWithEquation">
-                <xs:attribute name="customAnswer" type="xs:string" use="optional"/>
-                <xs:attribute name="percents" type="xs:double"/>
-                <xs:attribute name="score" type="xs:double"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="answers" type="MultipleChoiceAnswers"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="MultipleResponseQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="answers" type="MultipleResponseAnswers"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="MultipleResponseAnswers">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="answer" type="MultipleResponseAnswer"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="MultipleResponseAnswer">
-        <xs:complexContent>
-            <xs:extension base="TextWithEquation">
-                <xs:attribute name="correct" type="xs:boolean"/>
-                <xs:attribute name="selected" type="xs:boolean" use="required"/>
-                <xs:attribute name="customAnswer" type="xs:string"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="TypeInQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:choice>
-                    <xs:element name="acceptableAnswers" type="FillInTheBlankAnswers" minOccurs="0"/>
-                </xs:choice>
-                <xs:attribute name="userAnswer" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="FillInTheBlankAnswers">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:element name="answer" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="MatchingQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="premises" type="Premises"/>
-                    <xs:element name="responses" type="Responses"/>
-                    <xs:element name="matches" type="MatchesCollection" minOccurs="0"/>
-                    <xs:element name="userAnswer" type="MatchesCollection"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="Match">
-        <xs:attribute name="premiseIndex" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="responseIndex" type="xs:unsignedInt" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="MatchesCollection">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="match" type="Match"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="SequenceQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="answers" type="SequenceAnswers"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="SequenceAnswers">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="answer">
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="TextWithEquation">
-                            <xs:attribute name="originalIndex" type="xs:unsignedInt" use="required"/>
-                        </xs:extension>
-                    </xs:complexContent>
-                    </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="NumericQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence minOccurs="0">
-                    <xs:element name="answers" type="NumericAnswers" minOccurs="0"/>
-                </xs:sequence>
-                <xs:attribute name="userAnswer" type="xs:double" use="optional"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="NumericAnswers">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="numericAnswer"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="NumericAnswerBase"/>
-    <xs:complexType name="NAEqual">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="NABetween">
-        <xs:complexContent>
-            <xs:extension base="NumericAnswerBase">
-                <xs:sequence>
-                    <xs:element name="leftOperand" type="xs:double"/>
-                    <xs:element name="rightOperand" type="xs:double"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="NAGreaterThan">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="NAGreaterThanOrEqual">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="NALessThan">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="NALessThanOrEqual">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="NANotEqual">
-        <xs:simpleContent>
-            <xs:extension base="xs:double"/>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="QuizSettings">
-        <xs:choice minOccurs="0">
-            <xs:element name="passingScore" minOccurs="0">
-                <xs:simpleType>
-                    <xs:restriction base="xs:double">
-                        <xs:minInclusive value="0"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-            <xs:element name="passingPercent" minOccurs="0">
-                <xs:simpleType>
-                    <xs:restriction base="xs:double">
-                        <xs:minInclusive value="0"/>
-                        <xs:maxInclusive value="100"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-        </xs:choice>
-        <xs:attribute name="quizType" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="graded"/>
-                    <xs:enumeration value="survey"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="maxNormalizedScore" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float">
-                    <xs:minInclusive value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="timeLimit" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="maxScore" type="xs:double" use="optional" default="0"/>
-    </xs:complexType>
-    <xs:complexType name="CT_variable">
-        <xs:attribute name="name" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:minLength value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="title" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:minLength value="1"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="value" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:minLength value="0"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-    </xs:complexType>
-    <xs:complexType name="CT_variables">
-        <xs:sequence>
-            <xs:element name="variable" type="CT_variable" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="QuizSummary">
-        <xs:all>
-            <xs:element name="variables" type="CT_variables" minOccurs="0"/>
-        </xs:all>
-        <xs:attribute name="time" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="finishTimestamp" type="xs:string" use="required"/>
-        <xs:attribute name="score">
-            <xs:simpleType>
-                <xs:restriction base="xs:double">
-                    <xs:minInclusive value="0"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="percent">
-            <xs:simpleType>
-                <xs:restriction base="xs:double">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="100"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="passed" type="xs:boolean" />
-    </xs:complexType>
-    <xs:element name="question" type="QuestionBase" abstract="true"/>
-    <xs:element name="trueFalseQuestion" type="TrueFalseQuestion" substitutionGroup="question"/>
-    <xs:element name="multipleChoiceQuestion" type="MultipleChoiceQuestion" substitutionGroup="question"/>
-    <xs:element name="multipleResponseQuestion" type="MultipleResponseQuestion" substitutionGroup="question"/>
-    <xs:element name="fillInTheBlankQuestion" type="FillInTheBlankQuestion" substitutionGroup="question"/>
-    <xs:element name="typeInQuestion" type="TypeInQuestion" substitutionGroup="question"/>
-    <xs:element name="matchingQuestion" type="MatchingQuestion" substitutionGroup="question"/>
-    <xs:element name="sequenceQuestion" type="SequenceQuestion" substitutionGroup="question"/>
-    <xs:element name="wordBankQuestion" type="WordBankQuestion" substitutionGroup="question"/>
-    <xs:element name="essayQuestion" type="EssayQuestion" substitutionGroup="question"/>
-    <xs:element name="numericQuestion" type="NumericQuestion" substitutionGroup="question"/>
-    <xs:element name="hotspotQuestion" type="HotspotQuestion" substitutionGroup="question"/>
-    <xs:element name="likertScaleQuestion" type="LikertScaleQuestion" substitutionGroup="question"/>
-    <xs:element name="dndQuestion" type="DndQuestion" substitutionGroup="question"/>
-    <xs:element name="numericAnswer"/>
-    <xs:element name="equal" type="NAEqual" substitutionGroup="numericAnswer"/>
-    <xs:element name="between" type="NABetween" substitutionGroup="numericAnswer"/>
-    <xs:element name="greater" type="NAGreaterThan" substitutionGroup="numericAnswer"/>
-    <xs:element name="greaterOrEqual" type="NAGreaterThanOrEqual" substitutionGroup="numericAnswer"/>
-    <xs:element name="less" type="NALessThan" substitutionGroup="numericAnswer"/>
-    <xs:element name="lessOrEqual" type="NALessThanOrEqual" substitutionGroup="numericAnswer"/>
-    <xs:element name="notEqual" type="NANotEqual" substitutionGroup="numericAnswer"/>
-    <xs:complexType name="Premises">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="premise" type="TextWithEquation"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="Responses">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="response" type="TextWithEquation"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="FillInTheBlankQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="details" type="FillInTheBlankDetails"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="FillInTheBlankDetails">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="blank" type="FillInTheBlankDetailsBlank"/>
-            <xs:element name="text" type="xs:string"/>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="FillInTheBlankDetailsBlank">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="answer" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="userAnswer" type="xs:string" use="required"/>
-        <xs:attribute name="correct" type="xs:boolean"/>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceTextDetailsBlank">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="answer" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="userAnswerIndex" type="xs:integer"/>
-        <xs:attribute name="correctAnswerIndex" type="xs:integer"/>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceTextDetails">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="blank" type="MultipleChoiceTextDetailsBlank"/>
-            <xs:element name="text" type="xs:string"/>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="MultipleChoiceTextQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="details" type="MultipleChoiceTextDetails"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:element name="multipleChoiceTextQuestion" type="MultipleChoiceTextQuestion" substitutionGroup="question"/>
-    <xs:complexType name="WordBankQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="details" type="WordBankDetails"/>
-                    <xs:choice minOccurs="0">
-                        <xs:element name="words" type="WordBankExtraWords"/>
-                    </xs:choice>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="WordBankDetails">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="blank" type="WordBankDetailsWord"/>
-            <xs:element name="text" type="xs:string"/>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="WordBankDetailsWord">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="userAnswer" type="xs:string"/>
-                <xs:attribute name="correct" type="xs:boolean"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="WordBankExtraWords">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="word" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="EssayQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence minOccurs="0">
-                    <xs:element name="userAnswer" type="xs:string" minOccurs="0"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <!--Hotspot question begin-->
-    <xs:complexType name="HotspotQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="userAnswer" type="HotspotUserAnswer"/>
-                    <xs:element name="hotspots" type="HotspotCollection"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="HotspotUserAnswer">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="point" type="Point"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="HotspotCollection">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:element ref="hotspot"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="Hotspot" abstract="true">
-        <xs:attribute name="x" type="xs:float" use="required"/>
-        <xs:attribute name="y" type="xs:float" use="required"/>
-        <xs:attribute name="width" type="xs:float" use="required"/>
-        <xs:attribute name="height" type="xs:float" use="required"/>
-        <xs:attribute name="marked" type="xs:boolean" use="required"/>
-        <xs:attribute name="label" type="xs:string" use="required"/>
-        <xs:attribute name="correct" type="xs:boolean"/>
-    </xs:complexType>
-    <xs:complexType name="RectangleHotspot">
-        <xs:complexContent>
-            <xs:extension base="Hotspot"/>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="OvalHotspot">
-        <xs:complexContent>
-            <xs:extension base="Hotspot"/>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="FreeformHotspot">
-        <xs:complexContent>
-            <xs:extension base="Hotspot">
-                <xs:attribute name="points" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:element name="hotspot" abstract="true"/>
-    <xs:element name="rectangle" type="RectangleHotspot" substitutionGroup="hotspot"/>
-    <xs:element name="oval" type="OvalHotspot" substitutionGroup="hotspot"/>
-    <xs:element name="freeform" type="FreeformHotspot" substitutionGroup="hotspot"/>
-    <xs:complexType name="Point">
-        <xs:attribute name="x" type="xs:float" use="required"/>
-        <xs:attribute name="y" type="xs:float" use="required"/>
-    </xs:complexType>
-    <!--Hotspot question end-->
-    <xs:complexType name="LikertScaleQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="statements" type="LikertScaleStatements"/>
-                    <xs:element name="scaleLabels" type="LikertScaleLabels"/>
-                    <xs:element name="userAnswer" type="LikertScaleUserAnswer"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="LikertScaleStatements">
-        <xs:sequence maxOccurs="unbounded">
-            <xs:element name="statement" type="TextWithEquation"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="LikertScaleLabels">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="label" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute name="numberFromZero" type="xs:boolean" />
-    </xs:complexType>
-    <xs:complexType name="LikertScaleMatch">
-        <xs:attribute name="statementIndex" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="labelIndex" type="xs:int" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="LikertScaleUserAnswer">
-        <xs:sequence>
-            <xs:element name="match" type="LikertScaleMatch" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="DndQuestion">
-        <xs:complexContent>
-            <xs:extension base="Question">
-                <xs:sequence>
-                    <xs:element name="objects" type="DndQuestionObjects"/>
-                    <xs:element name="destinations" type="DndQuestionDestinations"/>
-                    <xs:element name="matches" type="DndQuestionObjectPlacementCollection" minOccurs="0"/>
-                    <xs:element name="userAnswer" type="DndQuestionObjectPlacementCollection"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="DndQuestionObjects">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="object" type="DndQuestionObject"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="DndQuestionDestinations">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="destination" type="DndQuestionObject"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="DndQuestionObject">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="id" type="xs:string" use="required"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="DndQuestionObjectPlacementCollection">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="match" type="DndQuestionObjectPlacement"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="DndQuestionObjectPlacement">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="objectIndex" type="xs:integer" use="required"/>
-                <xs:attribute name="destinationIndex" type="xs:integer" use="required"/>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:simpleType name="ST_status">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="correct"/>
-            <xs:enumeration value="partially"/>
-            <xs:enumeration value="incorrect"/>
-            <xs:enumeration value="notAnswered"/>
-            <xs:enumeration value="answered"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:complexType name="GroupResult">
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="passingScore" type="xs:string" use="required"/>
-        <xs:attribute name="awardedScore" type="xs:string" use="required"/>
-        <xs:attribute name="passingPercent" type="xs:string" use="required"/>
-        <xs:attribute name="awardedPercent" type="xs:string" use="required"/>
-        <xs:attribute name="totalQuestions" type="xs:unsignedInt" use="required"/>
-        <xs:attribute name="answeredQuestions" type="xs:unsignedInt" use="required"/>
-    </xs:complexType>
-    <xs:complexType name="GroupsResult">
-        <xs:sequence>
-            <xs:element name="group" type="GroupResult" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults" targetNamespace="http://www.ispringsolutions.com/ispring/quizbuilder/quizresults" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="CT_TextWithEquation" mixed="true">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="text" type="xs:string"/>
+				<xs:element name="equation" type="CT_Equation"/>
+			</xs:choice>
+			<xs:element name="picture" type="CT_Picture" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_Picture">
+		<xs:attribute name="altText" type="xs:string"/>
+	</xs:complexType>
+	<xs:element name="quizReport" type="CT_QuizReport">
+		<xs:annotation>
+			<xs:documentation>quiz report</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="CT_QuizReport">
+		<xs:all>
+			<xs:element name="quizSettings" type="CT_QuizSettings"/>
+			<xs:element name="summary" type="CT_QuizSummary"/>
+			<xs:element name="questions" type="CT_Questions"/>
+			<xs:element name="groups" type="CT_GroupsResult"/>
+		</xs:all>
+		<xs:attribute name="version" type="xs:unsignedInt" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="CT_Questions">
+		<xs:annotation>
+			<xs:documentation>user answers</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element ref="question"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_QuestionBase" abstract="true">
+		<xs:sequence>
+			<xs:element name="direction" type="CT_TextWithEquation"/>
+			<xs:element name="feedback" type="CT_TextWithEquation" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="evaluationEnabled" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="CT_Question" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="CT_QuestionBase">
+				<xs:attribute name="maxPoints" type="xs:float"/>
+				<xs:attribute name="maxAttempts">
+					<xs:simpleType>
+						<xs:restriction base="xs:unsignedInt"/>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="usedAttempts" type="xs:unsignedInt"/>
+				<xs:attribute name="awardedPoints" type="xs:double"/>
+				<xs:attribute name="status" type="ST_status" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_TrueFalseQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="answers" type="CT_TrueFalseAnswers"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceAnswers">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="answer" type="CT_MultipleChoiceAnswer"/>
+		</xs:sequence>
+		<xs:attribute name="correctAnswerIndex" type="xs:integer"/>
+		<xs:attribute name="userAnswerIndex" type="xs:integer"/>
+	</xs:complexType>
+	<xs:complexType name="CT_TrueFalseAnswers">
+		<xs:sequence minOccurs="2" maxOccurs="2">
+			<xs:element name="answer" type="CT_TextWithEquation"/>
+		</xs:sequence>
+		<xs:attribute name="correctAnswerIndex">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedInt">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="userAnswerIndex">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedInt">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceAnswer">
+		<xs:complexContent>
+			<xs:extension base="CT_TextWithEquation">
+				<xs:attribute name="customAnswer" type="xs:string" use="optional"/>
+				<xs:attribute name="percents" type="xs:double"/>
+				<xs:attribute name="score" type="xs:double"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="answers" type="CT_MultipleChoiceAnswers"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleResponseQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="answers" type="CT_MultipleResponseAnswers"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleResponseAnswers">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="answer" type="CT_MultipleResponseAnswer"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleResponseAnswer">
+		<xs:complexContent>
+			<xs:extension base="CT_TextWithEquation">
+				<xs:attribute name="correct" type="xs:boolean"/>
+				<xs:attribute name="selected" type="xs:boolean" use="required"/>
+				<xs:attribute name="customAnswer" type="xs:string"/>
+				<xs:attribute name="score" type="xs:double"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_TypeInQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:choice>
+					<xs:element name="acceptableAnswers" type="CT_FillInTheBlankAnswers" minOccurs="0"/>
+				</xs:choice>
+				<xs:attribute name="userAnswer" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_FillInTheBlankAnswers">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="answer" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_MatchingQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="premises" type="CT_Premises"/>
+					<xs:element name="responses" type="CT_Responses"/>
+					<xs:element name="matches" type="CT_MatchesCollection" minOccurs="0"/>
+					<xs:element name="userAnswer" type="CT_MatchesCollection"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_Match">
+		<xs:attribute name="premiseIndex" type="xs:unsignedInt" use="required"/>
+		<xs:attribute name="responseIndex" type="xs:unsignedInt" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="CT_MatchesCollection">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="match" type="CT_Match"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_SequenceQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="answers" type="CT_SequenceAnswers"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_SequenceAnswers">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="answer">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="CT_TextWithEquation">
+							<xs:attribute name="originalIndex" type="xs:unsignedInt" use="required"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_NumericQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence minOccurs="0">
+					<xs:element name="answers" type="CT_NumericAnswers" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="userAnswer" type="xs:double" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_NumericAnswers">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:choice>
+				<xs:element name="between" type="CT_NABetween"/>
+				<xs:element name="equal" type="xs:double"/>
+				<xs:element name="greater" type="xs:double"/>
+				<xs:element name="greaterOrEqual" type="xs:double"/>
+				<xs:element name="less" type="xs:double"/>
+				<xs:element name="lessOrEqual" type="xs:double"/>
+				<xs:element name="notEqual" type="xs:double"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_NABetween">
+		<xs:sequence>
+			<xs:element name="leftOperand" type="xs:double"/>
+			<xs:element name="rightOperand" type="xs:double"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_QuizSettings">
+		<xs:choice minOccurs="0">
+			<xs:element name="passingScore" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:double">
+						<xs:minInclusive value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="passingPercent" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:double">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="quizType" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="graded"/>
+					<xs:enumeration value="survey"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="maxNormalizedScore" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:float">
+					<xs:minInclusive value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="timeLimit" type="xs:unsignedInt" use="required"/>
+		<xs:attribute name="maxScore" type="xs:double" use="optional" default="0"/>
+	</xs:complexType>
+	<xs:complexType name="CT_variable">
+		<xs:attribute name="name" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="title" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="value" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CT_variables">
+		<xs:sequence>
+			<xs:element name="variable" type="CT_variable" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_QuizSummary">
+		<xs:all>
+			<xs:element name="variables" type="CT_variables" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="time" type="xs:unsignedInt" use="required"/>
+		<xs:attribute name="finishTimestamp" type="xs:string" use="required"/>
+		<xs:attribute name="score">
+			<xs:simpleType>
+				<xs:restriction base="xs:double">
+					<xs:minInclusive value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="percent">
+			<xs:simpleType>
+				<xs:restriction base="xs:double">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="100"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="passed" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:element name="question" type="CT_QuestionBase" abstract="true"/>
+	<xs:element name="trueFalseQuestion" type="CT_TrueFalseQuestion" substitutionGroup="question"/>
+	<xs:element name="multipleChoiceQuestion" type="CT_MultipleChoiceQuestion" substitutionGroup="question"/>
+	<xs:element name="multipleResponseQuestion" type="CT_MultipleResponseQuestion" substitutionGroup="question"/>
+	<xs:element name="fillInTheBlankQuestion" type="CT_FillInTheBlankQuestion" substitutionGroup="question"/>
+	<xs:element name="typeInQuestion" type="CT_TypeInQuestion" substitutionGroup="question"/>
+	<xs:element name="matchingQuestion" type="CT_MatchingQuestion" substitutionGroup="question"/>
+	<xs:element name="sequenceQuestion" type="CT_SequenceQuestion" substitutionGroup="question"/>
+	<xs:element name="wordBankQuestion" type="CT_WordBankQuestion" substitutionGroup="question"/>
+	<xs:element name="essayQuestion" type="CT_EssayQuestion" substitutionGroup="question"/>
+	<xs:element name="numericQuestion" type="CT_NumericQuestion" substitutionGroup="question"/>
+	<xs:element name="hotspotQuestion" type="CT_HotspotQuestion" substitutionGroup="question"/>
+	<xs:element name="likertScaleQuestion" type="CT_LikertScaleQuestion" substitutionGroup="question"/>
+	<xs:element name="dndQuestion" type="CT_DndQuestion" substitutionGroup="question"/>
+	<xs:complexType name="CT_Premises">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="premise" type="CT_TextWithEquation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_Responses">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="response" type="CT_TextWithEquation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_FillInTheBlankQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="details" type="CT_FillInTheBlankDetails"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_FillInTheBlankDetails">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="blank" type="CT_FillInTheBlankDetailsBlank"/>
+			<xs:element name="text" type="xs:string"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="CT_FillInTheBlankDetailsBlank">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="answer" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="userAnswer" type="xs:string" use="required"/>
+		<xs:attribute name="correct" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceTextDetailsBlank">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="answer" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="userAnswerIndex" type="xs:integer"/>
+		<xs:attribute name="correctAnswerIndex" type="xs:integer"/>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceTextDetails">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="text" type="xs:string"/>
+			<xs:element name="equation" type="CT_Equation"/>
+			<xs:element name="blank" type="CT_MultipleChoiceTextDetailsBlank"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="CT_MultipleChoiceTextQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="details" type="CT_MultipleChoiceTextDetails"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="multipleChoiceTextQuestion" type="CT_MultipleChoiceTextQuestion" substitutionGroup="question"/>
+	<xs:complexType name="CT_WordBankQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="details" type="CT_WordBankDetails"/>
+					<xs:element name="words" type="CT_WordBankExtraWords" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_WordBankDetails">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="text" type="xs:string"/>
+			<xs:element name="equation" type="CT_Equation"/>
+			<xs:element name="blank" type="CT_WordBankDetailsWord"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="CT_WordBankDetailsWord">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="userAnswer" type="xs:string"/>
+				<xs:attribute name="correct" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CT_WordBankExtraWords">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="word" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_EssayQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence minOccurs="0">
+					<xs:element name="userAnswer" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--Hotspot question begin-->
+	<xs:complexType name="CT_HotspotQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="userAnswer" type="CT_HotspotUserAnswer"/>
+					<xs:element name="hotspots" type="CT_HotspotCollection"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_HotspotUserAnswer">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="point" type="CT_Point"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_HotspotCollection">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element ref="hotspot"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_Hotspot" abstract="true">
+		<xs:attribute name="x" type="xs:float" use="required"/>
+		<xs:attribute name="y" type="xs:float" use="required"/>
+		<xs:attribute name="width" type="xs:float" use="required"/>
+		<xs:attribute name="height" type="xs:float" use="required"/>
+		<xs:attribute name="marked" type="xs:boolean" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+		<xs:attribute name="correct" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="CT_RectangleHotspot">
+		<xs:complexContent>
+			<xs:extension base="CT_Hotspot"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_OvalHotspot">
+		<xs:complexContent>
+			<xs:extension base="CT_Hotspot"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_FreeformHotspot">
+		<xs:complexContent>
+			<xs:extension base="CT_Hotspot">
+				<xs:attribute name="points" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="hotspot" abstract="true"/>
+	<xs:element name="rectangle" type="CT_RectangleHotspot" substitutionGroup="hotspot"/>
+	<xs:element name="oval" type="CT_OvalHotspot" substitutionGroup="hotspot"/>
+	<xs:element name="freeform" type="CT_FreeformHotspot" substitutionGroup="hotspot"/>
+	<xs:complexType name="CT_Point">
+		<xs:attribute name="x" type="xs:float" use="required"/>
+		<xs:attribute name="y" type="xs:float" use="required"/>
+	</xs:complexType>
+	<!--Hotspot question end-->
+	<xs:complexType name="CT_LikertScaleQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="statements" type="CT_LikertScaleStatements"/>
+					<xs:element name="scaleLabels" type="CT_LikertScaleLabels"/>
+					<xs:element name="userAnswer" type="CT_LikertScaleUserAnswer"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_LikertScaleStatements">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="statement" type="CT_TextWithEquation"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_LikertScaleLabels">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="label" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="numberFromZero" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="CT_LikertScaleMatch">
+		<xs:attribute name="statementIndex" type="xs:unsignedInt" use="required"/>
+		<xs:attribute name="labelIndex" type="xs:int" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="CT_LikertScaleUserAnswer">
+		<xs:sequence>
+			<xs:element name="match" type="CT_LikertScaleMatch" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestion">
+		<xs:complexContent>
+			<xs:extension base="CT_Question">
+				<xs:sequence>
+					<xs:element name="objects" type="CT_DndQuestionObjects"/>
+					<xs:element name="destinations" type="CT_DndQuestionDestinations"/>
+					<xs:element name="matches" type="CT_DndQuestionObjectPlacementCollection" minOccurs="0"/>
+					<xs:element name="userAnswer" type="CT_DndQuestionObjectPlacementCollection"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestionObjects">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="object" type="CT_DndQuestionObject"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestionDestinations">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="destination" type="CT_DndQuestionObject"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestionObject">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestionObjectPlacementCollection">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="match" type="CT_DndQuestionObjectPlacement"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_DndQuestionObjectPlacement">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="objectIndex" type="xs:integer" use="required"/>
+				<xs:attribute name="destinationIndex" type="xs:integer" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="ST_status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="correct"/>
+			<xs:enumeration value="partially"/>
+			<xs:enumeration value="incorrect"/>
+			<xs:enumeration value="notAnswered"/>
+			<xs:enumeration value="answered"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="CT_GroupResult">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="passingScore" type="xs:string" use="required"/>
+		<xs:attribute name="awardedScore" type="xs:string" use="required"/>
+		<xs:attribute name="passingPercent" type="xs:string" use="required"/>
+		<xs:attribute name="awardedPercent" type="xs:string" use="required"/>
+		<xs:attribute name="totalQuestions" type="xs:unsignedInt" use="required"/>
+		<xs:attribute name="answeredQuestions" type="xs:unsignedInt" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="CT_GroupsResult">
+		<xs:sequence>
+			<xs:element name="group" type="CT_GroupResult" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CT_Equation">
+		<xs:sequence>
+			<xs:element name="latex" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>
