@@ -17,6 +17,9 @@ class QuizStatus
     /** @var float */
     private $studentPoints;
 
+     /** @var string */
+     private $grade;
+
     /** @var float */
     private $studentPercent;
 
@@ -38,6 +41,16 @@ class QuizStatus
     public function setPassingPoints($points)
     {
         $this->passingPoints = $points;
+        return $this;
+    }
+
+    /**
+     * @param string $grade
+     * @return $this
+     */
+    public function setGrade($grade)
+    {
+        $this->grade = $grade;
         return $this;
     }
 
@@ -97,6 +110,14 @@ class QuizStatus
     public function getStudentPoints()
     {
         return round($this->studentPoints, 2);
+    }
+
+       /**
+     * @return string
+     */
+    public function getGrade()
+    {
+        return $this->grade;
     }
 
     /**

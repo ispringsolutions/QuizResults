@@ -18,6 +18,7 @@ class QuizResults
     public $quizTakingTimeInSeconds;
     public $formattedQuizTakingTime;
     public $version;
+    public $grade;
 
     /** @var QuizDetails */
     public $detailResult;
@@ -103,6 +104,8 @@ class QuizResults
         $this->passingPercent = $requestParams["psp"];
         $this->totalScore = $requestParams["tp"];
 
+        $this->grade = $requestParams["g"] ?: null;
+
         $this->studentName = $requestParams["sn"];
         $this->studentEmail = $requestParams["se"];
         $this->studentPoints = $requestParams["sp"];
@@ -119,6 +122,11 @@ class QuizResults
                          ->setPassingPercent($this->passingScorePercent)
                          ->setTotalPoints($this->totalScore)
                          ->setStudentPoints($this->studentPoints);
+
+        if ($this->grade)
+        {
+            $this->quizStatus->setGrade($this->grade);
+        }
 
         if (Version::IsVersionNewerOrSameAs($this->version, self::VERSION_9))
         {

@@ -1,6 +1,6 @@
 <?php
 
-class Match
+class Matching
 {
     public $premiseIndex;
     public $responseIndex;

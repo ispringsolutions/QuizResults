@@ -71,6 +71,11 @@ class QuizReportGenerator
             $header .= "Quiz Finished At: " . $this->quizResults->detailResult->finishedAt . PHP_EOL;
         }
 
+        if ($this->quizResults->grade)
+        {
+            $header .= 'Grade: ' . $this->quizResults->grade . PHP_EOL;
+        }
+
         return $header . PHP_EOL;
     }
 

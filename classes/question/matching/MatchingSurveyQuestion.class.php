@@ -1,5 +1,7 @@
 <?php
 
+
+
 class MatchingSurveyQuestion extends Question
 {
     /**
@@ -9,7 +11,7 @@ class MatchingSurveyQuestion extends Question
     public $premises;
 
     /**
-     * resposes
+     * responses
      * @var array of string
      */
     public $responses;
@@ -84,7 +86,7 @@ class MatchingSurveyQuestion extends Question
         {
             $matchNode = $matchesList->item($i);
 
-            $match = new Match();
+            $match = new Matching();
             $match->initFromXmlNode($matchNode);
             $out[] = $match;
         }

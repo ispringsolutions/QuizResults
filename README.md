@@ -56,6 +56,7 @@ Quizzes generated with iSpring QuizMaker send results using the HTTP POST method
 | tl | Time limit | optional, when available | 7, 8, 9  |
 | ut | Used time | optional, when available | 7, 8, 9  |
 | fut | Time spent on taking the quiz (with time format specified) | optional, when available | 9  |
+| g | Grade | optional, when available | 9  |
 
 ####   These variables are available if a quiz has a user data request form:  
 | Variable  | Description | Comment | Version |

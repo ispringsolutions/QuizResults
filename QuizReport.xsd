@@ -315,6 +315,7 @@
 			</xs:simpleType>
 		</xs:attribute>
 		<xs:attribute name="passed" type="xs:boolean"/>
+		<xs:attribute name="grade" type="xs:string"/>
 	</xs:complexType>
 	<xs:element name="question" type="CT_QuestionBase" abstract="true"/>
 	<xs:element name="trueFalseQuestion" type="CT_TrueFalseQuestion" substitutionGroup="question"/>
