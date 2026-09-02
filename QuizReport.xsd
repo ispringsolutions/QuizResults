@@ -47,6 +47,7 @@
 			</xs:simpleType>
 		</xs:attribute>
 		<xs:attribute name="evaluationEnabled" type="xs:boolean" use="required"/>
+		<xs:attribute name="groupId" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="CT_Question" abstract="true">
 		<xs:complexContent>
@@ -315,6 +316,7 @@
 			</xs:simpleType>
 		</xs:attribute>
 		<xs:attribute name="passed" type="xs:boolean"/>
+		<xs:attribute name="grade" type="xs:string"/>
 	</xs:complexType>
 	<xs:element name="question" type="CT_QuestionBase" abstract="true"/>
 	<xs:element name="trueFalseQuestion" type="CT_TrueFalseQuestion" substitutionGroup="question"/>
@@ -564,9 +566,11 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="CT_GroupResult">
+		<xs:attribute name="id" type="xs:string" use="optional"/>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="passingScore" type="xs:string" use="required"/>
 		<xs:attribute name="awardedScore" type="xs:string" use="required"/>
+		<xs:attribute name="maxScore" type="xs:string"/>
 		<xs:attribute name="passingPercent" type="xs:string" use="required"/>
 		<xs:attribute name="awardedPercent" type="xs:string" use="required"/>
 		<xs:attribute name="totalQuestions" type="xs:unsignedInt" use="required"/>
