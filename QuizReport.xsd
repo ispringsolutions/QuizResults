@@ -566,6 +566,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="CT_GroupResult">
+		<xs:attribute name="id" type="xs:string" use="optional"/>
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="passingScore" type="xs:string" use="required"/>
 		<xs:attribute name="awardedScore" type="xs:string" use="required"/>
